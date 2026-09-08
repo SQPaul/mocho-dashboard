@@ -8,7 +8,7 @@ Sitio: https://sqpaul.github.io/mocho-dashboard/
 
 Desde esta carpeta: `python -m http.server 8000 --bind 127.0.0.1`. Abrir http://127.0.0.1:8000 o `http://127.0.0.1:8000/#capitulo-2`.
 
-Web estática sin compilación ni claves API. Incluye relieve 3D/2D, balizas GNSS consultables, Figura 2 y navegación horizontal por capítulos. El capítulo 2 añade Figura 4 (dos series de superficie con filtros, incertidumbre, tabla y CSV) y Figura 7 (11 contornos sobre el mismo motor 3D, compartido en `map-common.js`). Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D.
+Web estática sin compilación ni claves API. Incluye relieve 3D/2D, balizas GNSS consultables, Figura 2 y navegación horizontal por capítulos. El capítulo 2 añade Figura 4 (dos series de superficie con filtros, incertidumbre, tabla y CSV) y Figura 7 (12 contornos sobre el mismo motor 3D, compartido en `map-common.js`). Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D.
 
 ## Fuentes
 
@@ -25,7 +25,7 @@ Se conservan las cifras publicadas en el informe. La geometría archivada tiene 
 
 `data/study-area.json`: geometrías WGS84, encuadre, fechas y procedencia. Los fondos `satellite-2025.webp` y `satellite-2026.webp` están georreferenciados en Web Mercator; el segundo corresponde al 10/03/2026. Las series de `glacier-variations.json` conservan los valores del Excel del Anexo 2.
 
-`icecap-history.geojson` incorpora 1979, 1987, 2000, 2005, 2017, 2020, 2022, 2023, 2024, 2025 y 2026, con archivo y CRS original por contorno. Fuentes históricas: `Mocho_DGA/SIG/Delimitacion_glaciar` y `Mocho_DGA/2023-2024/GIS/Delimitacion`; años recientes: Anexo 2. La cobertura de la Figura 7 es parcial: faltan 1976, 1986 y 2015. Los archivos de 1979 y 1987 no se rebautizan como 1976 y 1986. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
+`icecap-history.geojson` incorpora 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026, con archivo y CRS original por contorno. Fuentes históricas: `Mocho_DGA/SIG/Delimitacion_glaciar`, `Mocho_DGA/2023-2024/GIS/Delimitacion` y los polígonos verificados del Anexo 2. La Figura 7 tiene cobertura completa respecto de la serie publicada. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
 
 Regeneración: `python scripts/prepare_data.py --source RUTA/AnexosDigitales`. Dependencias: Fiona, Shapely, pyproj, Rasterio, NumPy y Pillow. No requiere GeoPandas.
 

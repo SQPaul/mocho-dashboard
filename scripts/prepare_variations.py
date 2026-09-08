@@ -16,16 +16,20 @@ from shapely import make_valid
 ROOT = Path(__file__).resolve().parents[1]
 SRC = Path(r'P:\Projects\Mocho_DGA\2025-2026\1_DASHBOARD\AnexosDigitales\2_Variaciones_de_glaciares')
 ARCHIVE = Path(r'P:\Projects\Mocho_DGA')
+POLYGONS = SRC / '2_Polígonos'
 HISTORICAL = {
-    1979: 'SIG/Delimitacion_glaciar/Mocho19790406.shp',
-    1987: 'SIG/Delimitacion_glaciar/Surface_1987.shp',
-    2000: 'SIG/Delimitacion_glaciar/Mocho20000221.shp',
-    2005: 'SIG/Delimitacion_glaciar/surface_2005.shp',
-    2017: 'SIG/Delimitacion_glaciar/Surface_2017.shp',
-    2020: 'SIG/Delimitacion_glaciar/surface_2020.shp',
-    2022: 'SIG/Delimitacion_glaciar/Surface_2022.shp',
-    2023: '2023-2024/GIS/Delimitacion/Surface 2023.shp',
-    2024: '2023-2024/GIS/Delimitacion/Surface 2024.shp',
+    1976: POLYGONS / 'Surface1976_v2024.shp',
+    1986: POLYGONS / 'Surface_1986.shp',
+    2000: ARCHIVE / 'SIG/Delimitacion_glaciar/Mocho20000221.shp',
+    2005: ARCHIVE / 'SIG/Delimitacion_glaciar/surface_2005.shp',
+    2015: POLYGONS / 'Mocho 20150411.shp',
+    2017: ARCHIVE / 'SIG/Delimitacion_glaciar/Surface_2017.shp',
+    2020: ARCHIVE / 'SIG/Delimitacion_glaciar/surface_2020.shp',
+    2022: ARCHIVE / 'SIG/Delimitacion_glaciar/Surface_2022.shp',
+    2023: ARCHIVE / '2023-2024/GIS/Delimitacion/Surface 2023.shp',
+    2024: ARCHIVE / '2023-2024/GIS/Delimitacion/Surface 2024.shp',
+    2025: POLYGONS / '2025/Surface 2025_m.geojson',
+    2026: POLYGONS / '2026/Surface2026.geojson',
 }
 
 def series(sheet, key):
@@ -59,12 +63,10 @@ def main():
     data = {'unit': 'km²', 'source': 'Informe final — Mocho 2025–2026, Figura 4, p. 19; Anexo 2, Variaciones de glaciares 2025–2026.',
             'glacier': series('Gl Mocho', 'glacier'), 'icecap': series('Capa de hielo Mocho Choshuenco', 'icecap')}
     (out / 'glacier-variations.json').write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-    maps = {'type': 'FeatureCollection', 'features': [polygon(ARCHIVE / p, year) for year, p in HISTORICAL.items()],
-            'availableYears': sorted([*HISTORICAL, 2025, 2026]), 'missingYears': [1976, 1986, 2015],
+    maps = {'type': 'FeatureCollection', 'features': [polygon(path, year) for year, path in HISTORICAL.items()],
+            'availableYears': sorted(HISTORICAL), 'missingYears': [],
             'source': 'Archivo SIG de Mocho_DGA y Anexo 2. Cada geometría conserva ruta, CRS y año del archivo original.',
-            'note': 'Los contornos de 1979 y 1987 están identificados con esos años en el proyecto QGIS 2022–2023; no se reasignan a 1976 ni 1986. Las áreas publicadas proceden del Excel, no de las geometrías simplificadas.'}
-    maps['features'].append(polygon(SRC / '2_Polígonos/2025/Surface 2025_m.geojson', 2025))
-    maps['features'].append(polygon(SRC / '2_Polígonos/2026/Surface2026.geojson', 2026))
+            'note': 'La Figura 7 reúne las doce delimitaciones de la serie publicada. Las áreas publicadas proceden del Excel, no de las geometrías simplificadas.'}
     for f in maps['features']:
         row = next((r for r in data['icecap'] if r['year'] == f['properties']['year']), None)
         f['properties'].update({'source': f.pop('sourcePath'), 'sourceCrs': f.pop('sourceCrs'),

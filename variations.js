@@ -4,15 +4,16 @@ const svgNS = 'http://www.w3.org/2000/svg';
 const fmt = n => n.toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:3});
 const svg = (tag, attrs, content='') => { const n=document.createElementNS(svgNS,tag); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); n.textContent=content; return n; };
 let variationData,mapData,variationMap,chapterLoading;
-const selectedContours=new Set([2000,2026]);
-const palette=['#f1d471','#dfabed','#63d9f5','#eab58a','#dfef78','#87b7fc','#f6a1bd','#89e5c0','#d5b46b','#ff935e','#ffffff'];
+const selectedContours=new Set([1976,2026]);
+const palette=['#f1d471','#dfabed','#63d9f5','#eab58a','#dfef78','#87b7fc','#f6a1bd','#89e5c0','#d5b46b','#c995ff','#ff935e','#ffffff'];
 function setupContourMap() {
   const controls=el('#contour-controls'),select=el('#contour-select'),message=el('#variation-map-message');
   const notice=text=>{message.textContent=text;message.classList.remove('hidden');message.classList.add('notice');};
   variationMap=createTerrainMap('variation-map',variationData,'./data/satellite-2026.webp');
   window.mochoVariationMap=variationMap;
   const nav=bindMapControls(variationMap,el('.variation-map-panel'),'variation-',notice,()=>notice('No fue posible cargar la imagen de 2026. Recarga la página para reintentar.'));
-  el('#contour-note').textContent=`${mapData.availableYears.length} delimitaciones localizadas. Los contornos de 1979 y 1987 conservan los años del archivo; no equivalen a 1976 y 1986. Sin geometría localizada: ${mapData.missingYears.join(', ')}.`;
+  const coverage=mapData.missingYears.length?` Sin geometría localizada: ${mapData.missingYears.join(', ')}.`:' Cobertura completa de la serie publicada.';
+  el('#contour-note').textContent=`${mapData.availableYears.length} delimitaciones verificadas.${coverage}`;
   const years=[...mapData.availableYears,...mapData.missingYears].sort((a,b)=>a-b);
   years.forEach(year=>{
     const label=document.createElement('label'),input=document.createElement('input'),swatch=document.createElement('i');
@@ -22,7 +23,7 @@ function setupContourMap() {
     input.onchange=()=>{input.checked?selectedContours.add(year):selectedContours.delete(year);syncContours();};controls.append(label);
     if(!input.disabled)select.add(new Option(String(year),year));
   });
-  for(const [name,action] of [['Mostrar todos',()=>mapData.availableYears.forEach(y=>selectedContours.add(y))],['Restablecer comparación',()=>{selectedContours.clear();selectedContours.add(2000);selectedContours.add(2026);}]]){
+  for(const [name,action] of [['Mostrar todos',()=>mapData.availableYears.forEach(y=>selectedContours.add(y))],['Restablecer comparación',()=>{selectedContours.clear();selectedContours.add(1976);selectedContours.add(2026);}]]){
     const button=document.createElement('button');button.textContent=name;button.onclick=()=>{action();syncContours();};controls.append(button);
   }
   select.onchange=()=>{if(select.value)inspectContour(+select.value);};

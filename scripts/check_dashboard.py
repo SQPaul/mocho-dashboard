@@ -55,8 +55,10 @@ with sync_playwright() as pw:
     assert page.evaluate('mochoVariationMap.getPitch()') > 40
     assert page.locator('#variation-map canvas').is_visible()
     assert page.locator('#variation-map .contour-svg').count()==0
-    assert page.locator('#contour-controls input:not(:disabled)').count()==11
-    assert page.locator('#contour-controls input:disabled').count()==3
+    assert page.locator('#contour-controls input:not(:disabled)').count()==12
+    assert page.locator('#contour-controls input:disabled').count()==0
+    assert page.get_by_role('checkbox',name='Mostrar contorno 1976',exact=True).is_checked()
+    assert page.get_by_role('checkbox',name='Mostrar contorno 2026',exact=True).is_checked()
     page.get_by_role('checkbox',name='Mostrar contorno 2005',exact=True).check()
     page.wait_for_timeout(800)
     assert page.evaluate("mochoVariationMap.queryRenderedFeatures({layers:['contour-2005']}).length")>0
@@ -65,8 +67,12 @@ with sync_playwright() as pw:
     assert page.evaluate('mochoVariationMap.getTerrain()') is None
     page.get_by_role('checkbox',name='Mostrar contorno 2005',exact=True).uncheck()
     assert page.evaluate("mochoVariationMap.getLayoutProperty('contour-2005','visibility')")=='none'
-    page.locator('#contour-select').select_option('1987')
-    assert 'Sin superficie publicada' in page.locator('#contour-detail').inner_text()
+    page.locator('#contour-select').select_option('1976')
+    assert 'Surface1976_v2024.shp' in page.locator('#contour-detail').inner_text()
+    page.locator('#contour-select').select_option('1986')
+    assert 'Surface_1986.shp' in page.locator('#contour-detail').inner_text()
+    page.locator('#contour-select').select_option('2015')
+    assert 'Mocho 20150411.shp' in page.locator('#contour-detail').inner_text()
     page.locator('#variation-view-3d').click()
     page.wait_for_function('mochoVariationMap.getPitch()>50')
     page.locator('#variation-start').select_option('2026')
@@ -85,7 +91,7 @@ with sync_playwright() as pw:
     page.locator('#variation-chart g[data-series="icecap"]').first.focus()
     page.keyboard.press('ArrowRight')
     assert '1986' in page.locator('#variation-readout-title').inner_text()
-    assert page.locator('#chart-show-contour').is_disabled()
+    assert not page.locator('#chart-show-contour').is_disabled()
     page.locator('.variation-map-card').screenshot(path=str(out/'variations-3d.png'))
     page.locator('.variation-chart-card').screenshot(path=str(out/'variations-chart.png'))
     page.locator('#chapter-two .back-link').click()

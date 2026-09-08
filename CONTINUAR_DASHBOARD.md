@@ -1,6 +1,6 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron once contornos históricos, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles, tabla y CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes ya localizadas y los tres años todavía pendientes; no repetir esas búsquedas.
+> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles, tabla y CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
@@ -86,14 +86,12 @@ Fuente exacta: `Documentos\bm_hist\bm_hist.xlsx`, hoja `Hoja1`. Se identificó m
 8. No cambiar el año 1986 de las series a partir de la hoja de imágenes: esta última contiene una fecha de 1987. Conservar el año de la serie y documentar la discrepancia si se muestran las fechas de adquisición.
 9. Reutilizar el procedimiento de `scripts/prepare_data.py` para generar un WebP georreferenciado de la imagen de 2026 y geometrías WGS84. Verificar el CRS real antes de transformar.
 
-### Localizar los contornos históricos que faltan
+### Contornos históricos verificados
 
-1. La leyenda de la Figura 7 contiene los mismos 12 años de la serie de capa de hielo. El anexo consultado solo contiene geometrías de 2025 y 2026: faltan por localizar los otros diez años.
-2. Buscar primero las fuentes de capas en los proyectos QGIS, leyendo el `.qgs` interno del `.qgz` como ZIP/XML, sin modificarlo. Proyecto actual: `P:\Projects\Mocho_DGA\2025-2026\GIS\Mocho_2025-2026.qgz`.
-3. Ese proyecto ya fue revisado: referencia `GIS\Outline\Surface2026.geojson` y datos del período anterior, pero no mostró los contornos históricos en la búsqueda por nombre. Continuar con `P:\Projects\Mocho_DGA\2024-2025\GIS\Mocho_2024-2025.qgz` y las rutas históricas que allí aparezcan. Este segundo proyecto existe y todavía no se inspeccionó.
-4. Buscar únicamente archivos cartográficos pertinentes (`.shp`, `.geojson`, `.gpkg`); confirmar año, extensión espacial y correspondencia con la capa de hielo completa. No aceptar un archivo solo por su nombre.
-5. Generar `data/icecap-history.geojson` con una propiedad `year` y procedencia para cada año disponible. Mantener en el JSON de metadatos la lista de años con geometría verificada.
-6. Si después de revisar esas fuentes siguen faltando contornos, completar el gráfico de la Figura 4 y el mapa con los años comprobados. Indicar cuáles faltan y solicitar sus archivos; no presentar esa versión parcial como una reproducción completa de la Figura 7. No vectorizar la captura del informe ni inventar contornos.
+1. La Figura 7 contiene los mismos 12 años de la serie de capa de hielo: 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026.
+2. Los contornos de 1976 (`Surface1976_v2024.shp`), 1986 (`Surface_1986.shp`) y 2015 (`Mocho 20150411.shp`) están en `AnexosDigitales\2_Variaciones_de_glaciares\2_Polígonos` y corresponden a la capa de hielo completa.
+3. Conservar las rutas exactas en `HISTORICAL`, la procedencia y el CRS de cada geometría. No sustituir las superficies publicadas por el área calculada del mapa.
+4. No volver a buscar estos contornos ni reconstruir geometrías desde imágenes del informe.
 
 ## 6. Construir la Figura 7 interactiva
 
@@ -133,7 +131,7 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 3. Comprobar capítulo 1: mapa 3D/2D, capas, diez balizas, fichas, ocultación de balizas, B15/AWS, gráfico, filtros, teclado, incertidumbre, tabla y CSV. Para probar la ficha AWS preexistente, ocultar la capa de balizas y verificar B15 por separado cuando esté visible.
 4. Comprobar navegación: siguiente/anterior, URL directa a capítulo 2, recarga, Atrás/Adelante, foco y regreso al mapa sin quedar en blanco. Confirmar que no se acumulan mapas ni manejadores al alternar varias veces.
 5. Comprobar Figura 4: 17 y 12 observaciones, extremos de la tabla anterior, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
-6. Comprobar Figura 7: cada control activa su año, fuentes y fechas correctas, leyenda, consulta de contornos y enlace desde el gráfico. Los años ausentes nunca deben mostrarse como geometrías disponibles.
+6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.
 7. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico sí es aceptable.
 8. Probar fallos de carga de un JSON, de imagen y del relieve externo. Un fallo en un capítulo no debe impedir abrir el otro; mostrar un mensaje útil para el componente afectado.
 9. Usar la habilidad de navegador si está disponible. En la sesión de preparación, el navegador integrado devolvió una lista vacía; el proyecto dispone de su comprobador local como alternativa.

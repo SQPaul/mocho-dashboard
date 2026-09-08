@@ -12,8 +12,8 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - Sitio público: https://sqpaul.github.io/mocho-dashboard/
 - Rama publicada: main, raíz del repositorio mediante GitHub Pages.
 - Primera vista terminada: mapa 3D/2D, imagen Sentinel-2, polígonos del glaciar y capa de hielo, referencias BMCH/AWS-Mocho, métricas, fuentes y diseño móvil.
-- Capítulo 2: navegación horizontal `#capitulo-1` / `#capitulo-2`, Figura 4 con dos paneles interactivos, tabla y CSV; Figura 7 con el mismo mapa 3D/2D del capítulo 1 y 11 delimitaciones verificadas.
-- Contornos disponibles: 1979, 1987, 2000, 2005, 2017, 2020, 2022, 2023, 2024, 2025 y 2026. Faltan 1976, 1986 y 2015 del informe. Los archivos de 1979 y 1987 conservan sus fechas; no sustituyen los años del informe.
+- Capítulo 2: navegación horizontal `#capitulo-1` / `#capitulo-2`, Figura 4 con dos paneles interactivos, tabla y CSV; Figura 7 con el mismo mapa 3D/2D del capítulo 1 y las 12 delimitaciones de la serie publicada.
+- Contornos disponibles: 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026. La cobertura de la Figura 7 está completa.
 - Balizas: diez puntos nativos de MapLibre sobre el relieve, sin desplazamientos de marcadores HTML; consulta mediante clic o selector accesible. B15 y la referencia AWS comparten coordenada.
 - Autoría visible: **Diseño y desarrollo — Paul Sandoval-Quilodrán**; debajo, **Desarrollo del informe — GlacioUACh**.
 - Tono: herramienta científica elegante con firma discreta; no incluir una despedida explícita.
@@ -43,7 +43,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - index.html, style.css, additions.css y app.js: aplicación estática.
 - map-common.js: motor 3D, imagen georreferenciada, controles y fichas compartidos por ambos capítulos. variations.js / variations.css: mapa histórico, gráfico y navegación; history.js / history.css: Figura 2.
 - scripts/prepare_variations.py: regenera series, contornos y fondo 2026 desde el archivo local. Respeta CRS 32718/32719, omite geometrías nulas y conserva las superficies publicadas independientemente del área geométrica.
-- Fuentes históricas: `P:\Projects\Mocho_DGA\SIG\Delimitacion_glaciar` (1979–2022), `2023-2024\GIS\Delimitacion` (2023–2024) y anexo 2 de `2025-2026\1_DASHBOARD` (2025–2026). Rutas exactas en `HISTORICAL` del generador y propiedades de cada contorno.
+- Fuentes históricas: `P:\Projects\Mocho_DGA\SIG\Delimitacion_glaciar` (2000–2022), `2023-2024\GIS\Delimitacion` (2023–2024) y anexo 2 de `2025-2026\1_DASHBOARD` (1976, 1986, 2015, 2025 y 2026). Rutas exactas en `HISTORICAL` del generador y propiedades de cada contorno.
 - data/study-area.json, data/satellite-2025.webp, data/mass-balance-history.json, data/stakes.geojson, data/glacier-variations.json, data/icecap-history.geojson y data/satellite-2026.webp: derivados web.
 - scripts/prepare_data.py: regenera derivados desde AnexosDigitales sin alterar originales.
 - scripts/check_dashboard.py: prueba 3D, 2D, capas, fichas, controles, móvil y fallback.
@@ -60,4 +60,4 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 
 ## Próximo paso
 
-La Figura 7 sigue teniendo cobertura parcial respecto del informe: faltan geometrías verificadas de 1976, 1986 y 2015. No volver a buscar los once contornos ya incorporados. Mantener la primera pantalla enfocada en el área de estudio.
+La Figura 7 ya tiene las doce geometrías verificadas de la serie publicada. Mantener la primera pantalla enfocada en el área de estudio y conservar la trazabilidad de cada contorno al regenerar los datos.
