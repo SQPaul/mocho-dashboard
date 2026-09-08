@@ -69,14 +69,6 @@ async function initHistory() {
       });
       chart.append(group);
     });
-    const body = $('#history-table tbody'); body.replaceChildren();
-    for (const row of rows) {
-      const tr = document.createElement('tr');
-      for (const value of [row.period, row.balance === null ? 'Sin dato' : signed(row.balance), row.uncertainty === null ? 'No indicada' : `± ${number(row.uncertainty)}`]) {
-        const td = document.createElement('td'); td.textContent = value; tr.append(td);
-      }
-      body.append(tr);
-    }
     inspect(rows.at(-1));
   }
   start.onchange = () => {if (+start.value > +end.value) end.value = start.value; render();};

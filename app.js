@@ -21,7 +21,7 @@ async function addStakes(){
   }
   map.addLayer({id:'stake-label',type:'symbol',source:'stakes',layout:{'icon-image':['get','name'],'icon-anchor':'left','icon-offset':[8,-8],'icon-allow-overlap':false,'icon-ignore-placement':true}});
   const select=$('#stake-select');for(const f of data.features)select.add(new Option(f.properties.name,f.id));
-  const inspect=f=>{const p=f.properties,c=f.geometry.coordinates;popup({name:`Baliza ${p.name}`,category:'Red de monitoreo · GNSS',description:`Medición: ${p.date.split('-').reverse().join('/')}. WGS84: ${c[1].toFixed(6)}°, ${c[0].toFixed(6)}°. ${p.awsSector?'B15 coincide con la referencia del sector AWS-Mocho; no indica la posición exacta de la estación.':''}`,source:p.source},c);};
+  const inspect=f=>{const p=f.properties,c=f.geometry.coordinates;popup({name:`Baliza ${p.name}`,category:'Coordenadas WGS84',description:`Latitud ${c[1].toFixed(6)}° · Longitud ${c[0].toFixed(6)}°`},c);};
   select.onchange=()=>{const f=data.features.find(f=>f.id===select.value);if(f)inspect(f);};
   map.on('click',e=>{const hit=map.queryRenderedFeatures(e.point,{layers:['stake-dot','stake-label']})[0];const f=hit&&data.features.find(row=>row.properties.name===hit.properties.name);if(f)inspect(f);});
   const sync=()=>{const visible=$('#show-stakes').checked;for(const id of ['stake-dot','stake-label'])map.setLayoutProperty(id,'visibility',visible?'visible':'none');select.disabled=!visible;};
@@ -29,7 +29,7 @@ async function addStakes(){
 }
 async function init(){
   const response=await fetch('./data/study-area.json');if(!response.ok)throw new Error('No se pudieron cargar los datos');
-  const data=await response.json();map=createTerrainMap('map',data,'./data/satellite-2025.webp');
+  const data=await response.json();map=createTerrainMap('map',data,'./data/satellite-2026.webp');
   const controls=bindMapControls(map,$('#map').parentElement,'',notice,fallback);
   const timer=setTimeout(()=>notice('El mapa está tardando en cargar. Comprueba tu conexión.'),15000);
   map.on('load',()=>{

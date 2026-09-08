@@ -8,22 +8,22 @@ Sitio: https://sqpaul.github.io/mocho-dashboard/
 
 Desde esta carpeta: `python -m http.server 8000 --bind 127.0.0.1`. Abrir http://127.0.0.1:8000 o `http://127.0.0.1:8000/#capitulo-2`.
 
-Web estática sin compilación ni claves API. Incluye relieve 3D/2D, balizas GNSS consultables, Figura 2 y navegación horizontal por capítulos. El capítulo 2 añade Figura 4 (dos series de superficie con filtros, incertidumbre, tabla y CSV) y Figura 7 (12 contornos sobre el mismo motor 3D, compartido en `map-common.js`). Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D.
+Web estática sin compilación ni claves API. Incluye relieve 3D/2D, balizas GNSS consultables, Figura 2 y navegación horizontal por capítulos. El capítulo 2 añade Figura 4 (dos series de superficie con filtros, incertidumbre, tabla y CSV) y Figura 7 (12 contornos sobre el mismo motor 3D, compartido en `map-common.js`). Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D. La Figura 2 representa pérdidas en rojo y ganancias en azul, sin tabla de datos; conserva la descarga CSV.
 
 ## Fuentes
 
-- Imagen Sentinel-2 del 25/03/2025 en falso color y delimitaciones de 2025: AnexosDigitales, anexo 2.
-- Superficie 4,94 ± 0,09 km² y perímetro 13,09 km: Tabla 1, DGA (2025).
+- Imagen Sentinel-2 del 10/03/2026 en falso color y delimitaciones de 2026: AnexosDigitales, anexo 2.
+- Superficie 4,91 ± 0,09 km² y perímetro 12,45 km: Anexo 2, Figura 4 (2026).
 - Elevaciones 1.625 / 1.974 / 2.430 m s.n.m.: DEM Pléiades del 15/03/2020, citado en Tabla 1.
 - BMCH: coordenadas geográficas de Tabla 2, p. 30.
-- Sector AWS-Mocho: baliza B15, levantamiento de noviembre de 2025, anexo 3. Representa una referencia de sector, no la ubicación exacta de la estación. AWS-DGA se describe en la ficha sin asignar coordenadas no verificadas.
+- Balizas: la interfaz publica únicamente sus coordenadas WGS84; B15 también sirve como referencia espacial del sector AWS-Mocho.
 - Relieve de contexto: [Mapterhorn](https://mapterhorn.com/attribution/), con exageración vertical 1×. Es independiente de los DEM científicos del proyecto.
 
 Se conservan las cifras publicadas en el informe. La geometría archivada tiene pequeñas diferencias respecto de sus atributos de superficie; no se sustituyen los valores del informe por cálculos del mapa. Los datos originales no se modifican.
 
 ## Datos web
 
-`data/study-area.json`: geometrías WGS84, encuadre, fechas y procedencia. Los fondos `satellite-2025.webp` y `satellite-2026.webp` están georreferenciados en Web Mercator; el segundo corresponde al 10/03/2026. Las series de `glacier-variations.json` conservan los valores del Excel del Anexo 2.
+`data/study-area.json`: geometrías 2026 en WGS84, encuadre, fechas y procedencia. El fondo activo `satellite-2026.webp` está georreferenciado en Web Mercator y corresponde al 10/03/2026. Las series de `glacier-variations.json` conservan los valores del Excel del Anexo 2.
 
 `icecap-history.geojson` incorpora 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026, con archivo y CRS original por contorno. Fuentes históricas: `Mocho_DGA/SIG/Delimitacion_glaciar`, `Mocho_DGA/2023-2024/GIS/Delimitacion` y los polígonos verificados del Anexo 2. La Figura 7 tiene cobertura completa respecto de la serie publicada. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
 

@@ -24,10 +24,19 @@ with sync_playwright() as pw:
     assert terrain['terrain'] is not None, terrain
     assert terrain['elevation'] and terrain['elevation']>1000, terrain
     page.wait_for_function('window.mochoStakesReady === true')
+    study=page.evaluate("""fetch('./data/study-area.json').then(r=>r.json()).then(d=>({
+      imageDate:d.imageDate,
+      glacierDate:d.glacier.features[0].properties.referenceDate,
+      icecapDate:d.icecap.features[0].properties.referenceDate
+    }))""")
+    assert study=={'imageDate':'2026-03-10','glacierDate':'2026-03-10','icecapDate':'2026-03-10'},study
     assert page.locator('#stake-select option').count() == 11
     assert page.locator('.stake-marker').count() == 0
     page.locator('#stake-select').select_option('B15')
     assert page.get_by_role('heading',name='Baliza B15',exact=True).is_visible()
+    popup_text=page.locator('.maplibregl-popup-content').inner_text()
+    assert 'Latitud -39.941790° · Longitud -72.009367°' in popup_text,popup_text
+    assert 'Medición:' not in popup_text and 'Anexo 3' not in popup_text,popup_text
     page.locator('.maplibregl-popup-close-button').click()
     # Native marker placement must match the terrain-projected GNSS point.
     placement=page.evaluate('''async () => {
@@ -40,6 +49,13 @@ with sync_playwright() as pw:
     assert all(p['hit'] for p in placement), placement
     page.wait_for_selector('#history-content:not([hidden])')
     assert page.locator('#history-chart [data-year]').count()==22
+    assert page.locator('#history-table').count()==0
+    assert page.locator('#history-download').is_visible()
+    colors=page.evaluate("""({
+      gain:getComputedStyle(document.querySelector('.positive .balance-bar')).fill,
+      loss:getComputedStyle(document.querySelector('.negative .balance-bar')).fill
+    })""")
+    assert colors=={'gain':'rgb(57, 123, 179)','loss':'rgb(197, 83, 77)'},colors
     page.locator('#history-start').select_option('2022')
     assert page.locator('#history-chart [data-year]').count()==3
     page.locator('#history-uncertainty').check()
@@ -170,4 +186,4 @@ with sync_playwright() as pw:
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'checks':['3D elevation','GNSS screen placement','2D toggle','layers','point popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 3D contour map'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'historyColors':colors,'checks':['2026 study image and geometries','coordinate-only stake popup','Figure 2 gain/loss colors','Figure 2 without data table','3D elevation','GNSS screen placement','2D toggle','layers','point popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 3D contour map'],'pageErrors':errors},ensure_ascii=True))

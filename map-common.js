@@ -36,6 +36,6 @@ export function bindMapControls(map,panel,prefix,onNotice,onImageError){
 }
 export function showPopup(map,properties,coordinates){
   const root=document.createElement('div');
-  for(const [tag,key] of [['span','category'],['h3','name'],['p','description'],['p','source']]){const node=document.createElement(tag);node.textContent=properties[key];if(tag==='span')node.className='popup-tag';root.append(node);}
+  for(const [tag,key] of [['span','category'],['h3','name'],['p','description'],['p','source']]){if(!properties[key])continue;const node=document.createElement(tag);node.textContent=properties[key];if(tag==='span')node.className='popup-tag';root.append(node);}
   return new maplibregl.Popup({maxWidth:'310px',offset:12}).setLngLat(coordinates).setDOMContent(root).addTo(map);
 }
