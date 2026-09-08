@@ -12,6 +12,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - Sitio público: https://sqpaul.github.io/mocho-dashboard/
 - Rama publicada: main, raíz del repositorio mediante GitHub Pages.
 - Primera vista terminada: mapa 3D/2D, imagen Sentinel-2, polígonos del glaciar y capa de hielo, referencias BMCH/AWS-Mocho, métricas, fuentes y diseño móvil.
+- Capítulo 2 incorporado: navegación `#capitulo-1` / `#capitulo-2`, Figura 4 como series SVG interactivas y Figura 7 como mapa de contornos con 2025–2026 verificados.
 - Autoría visible: **Diseño y desarrollo — Paul Sandoval-Quilodrán**; debajo, **Desarrollo del informe — GlacioUACh**.
 - Tono: herramienta científica elegante con firma discreta; no incluir una despedida explícita.
 
@@ -21,6 +22,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - Informe base: INFORME FINAL - Mocho 2025-2026_V_final.pdf
 - Datos: AnexosDigitales
 - Sección usada: 1.1 Área de estudio, páginas impresas 3–4; BMCH desde Tabla 2, p. 30; referencia AWS-Mocho desde B15 del anexo 3.
+- Capítulo 2: Figura 4, p. 19, Figura 7, p. 22 y Anexo 2, «Variaciones de glaciares 2025–2026».
 - Imagen web: Sentinel-2 falso color del 25/03/2025. Geometrías reproyectadas desde UTM 18S a WGS84.
 - Superficie y perímetro: DGA 2025. Elevaciones: DEM Pléiades 2020.
 - Mapterhorn aporta el relieve visual y no reemplaza los DEM científicos.
@@ -37,7 +39,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 ## Arquitectura
 
 - index.html, style.css, additions.css y app.js: aplicación estática.
-- data/study-area.json y data/satellite-2025.webp: derivados web.
+- data/study-area.json, data/satellite-2025.webp, data/mass-balance-history.json, data/stakes.geojson, data/glacier-variations.json, data/icecap-history.geojson y data/satellite-2026.webp: derivados web.
 - scripts/prepare_data.py: regenera derivados desde AnexosDigitales sin alterar originales.
 - scripts/check_dashboard.py: prueba 3D, 2D, capas, fichas, controles, móvil y fallback.
 - vendor/: MapLibre GL JS 6.8.0 y licencia.

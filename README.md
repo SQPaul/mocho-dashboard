@@ -1,14 +1,14 @@
 # Mocho · Atlas del glaciar
 
-Área de estudio del glaciar Mocho en un mapa 3D. Primera entrega basada en la sección 1.1 del Informe final — Mocho 2025–2026, versión final (DGA / Universidad Austral de Chile).
+Atlas interactivo del glaciar Mocho. Incluye el capítulo 1 (área de estudio y balance de masa) y el capítulo 2 (variaciones de glaciares), basados en el Informe final — Mocho 2025–2026, versión final (DGA / Universidad Austral de Chile).
 
 Sitio: https://sqpaul.github.io/mocho-dashboard/
 
 ## Uso
 
-Desde esta carpeta: `python -m http.server 8000 --bind 127.0.0.1`. Abrir http://127.0.0.1:8000.
+Desde esta carpeta: `python -m http.server 8000 --bind 127.0.0.1`. Abrir http://127.0.0.1:8000 o `http://127.0.0.1:8000/#capitulo-2`.
 
-Web estática sin compilación ni claves API. Incluye relieve 3D/2D, zoom, giro, reinicio, pantalla completa, capas seleccionables y fichas. Requiere conexión para obtener el relieve externo de Mapterhorn.
+Web estática sin compilación ni claves API. Incluye relieve 3D/2D, balizas GNSS consultables, Figura 2 y navegación por capítulos. El capítulo 2 añade Figura 4 (series de superficie) y Figura 7 (contornos verificables 2025–2026). Requiere conexión para obtener el relieve externo de Mapterhorn.
 
 ## Fuentes
 
@@ -23,7 +23,7 @@ Se conservan las cifras publicadas en el informe. La geometría archivada tiene 
 
 ## Datos web
 
-`data/study-area.json`: geometrías WGS84, encuadre, fechas y procedencia. `data/satellite-2025.webp`: derivado de visualización reproyectado a Web Mercator. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
+`data/study-area.json`: geometrías WGS84, encuadre, fechas y procedencia. `data/satellite-2025.webp`: derivado de visualización reproyectado a Web Mercator. `data/glacier-variations.json`, `data/icecap-history.geojson` y `data/satellite-2026.webp` son derivados del Anexo 2. El mapa de la Figura 7 contiene las geometrías históricas localizadas y verificadas (2025 y 2026); los demás años de la leyenda permanecen documentados como pendientes. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
 
 Regeneración: `python scripts/prepare_data.py --source RUTA/AnexosDigitales`. Dependencias: Fiona, Shapely, pyproj, Rasterio, NumPy y Pillow. No requiere GeoPandas.
 

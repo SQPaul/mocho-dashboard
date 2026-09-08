@@ -24,6 +24,17 @@ with sync_playwright() as pw:
     assert terrain['terrain'] is not None, terrain
     assert terrain['elevation'] and terrain['elevation']>1000, terrain
     page.screenshot(path=str(out/'desktop.png'),full_page=True)
+    # Chapter 2: hash navigation, interactive Figure 7/4 and return path.
+    page.goto(url + '#capitulo-2', wait_until='networkidle', timeout=60000)
+    page.wait_for_selector('#variation-map .contour-svg path', state='attached', timeout=30000)
+    page.wait_for_selector('#variation-chart .variation-line', state='attached', timeout=30000)
+    assert page.locator('body.chapter-two').count() == 1
+    assert page.locator('#contour-controls input:disabled').count() >= 1
+    assert page.locator('#variation-chart g[data-year]').count() >= 20
+    page.get_by_role('button', name='Restablecer').click()
+    page.get_by_role('link', name='← Área de estudio').click()
+    page.wait_for_function("!document.body.classList.contains('chapter-two')")
+    assert page.locator('#map').is_visible()
     page.get_by_role('button',name='2D',exact=True).click()
     page.wait_for_function('mochoMap.getPitch() < 1')
     assert page.evaluate('mochoMap.getTerrain()') is None
@@ -56,5 +67,5 @@ with sync_playwright() as pw:
     fallback.wait_for_function('window.mochoReady === true',timeout=30000)
     assert fallback.get_by_role('button',name='3D',exact=True).is_disabled()
     assert fallback.evaluate('mochoMap.getTerrain()') is None
-    print(json.dumps({'result':'PASS','terrain':terrain,'checks':['3D elevation','2D toggle','layers','point popup','zoom','sources','mobile','terrain network fallback'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'checks':['3D elevation','2D toggle','layers','point popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 contour map'],'pageErrors':errors},ensure_ascii=True))
     browser.close()

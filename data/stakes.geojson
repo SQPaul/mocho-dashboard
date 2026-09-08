@@ -1,0 +1,181 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "B8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.00442475,
+          -39.94504921
+        ]
+      },
+      "properties": {
+        "name": "B8",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.00755651,
+          -39.94881982
+        ]
+      },
+      "properties": {
+        "name": "B10",
+        "date": "2025-11-23",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.00090326,
+          -39.94520382
+        ]
+      },
+      "properties": {
+        "name": "B11",
+        "date": "2025-11-23",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.01057112,
+          -39.95265584
+        ]
+      },
+      "properties": {
+        "name": "B12",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.01863001,
+          -39.95106247
+        ]
+      },
+      "properties": {
+        "name": "B13",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.01506078,
+          -39.94693402
+        ]
+      },
+      "properties": {
+        "name": "B14",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B15",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.00936732,
+          -39.94179041
+        ]
+      },
+      "properties": {
+        "name": "B15",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": true
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B17",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.01437121,
+          -39.93583999
+        ]
+      },
+      "properties": {
+        "name": "B17",
+        "date": "2025-11-23",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B18",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.01883275,
+          -39.94272367
+        ]
+      },
+      "properties": {
+        "name": "B18",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "B19",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.02964796,
+          -39.94212453
+        ]
+      },
+      "properties": {
+        "name": "B19",
+        "date": "2025-11-22",
+        "source": "Anexo 3 · GNSS, noviembre de 2025",
+        "awsSector": false
+      }
+    }
+  ],
+  "provenance": {
+    "path": "3_Cinemática_glaciar/3_gps/nov2025/balizas_mocho20251121.geojson",
+    "outputCrs": "EPSG:4326",
+    "coordinates": "Campos Longitude/Latitude WGS84 del levantamiento; geometría original UTM 18S.",
+    "note": "Fechas tomadas de Averaging start. Alturas elipsoidales excluidas; no son elevaciones sobre el nivel del mar."
+  }
+}

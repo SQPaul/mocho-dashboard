@@ -23,6 +23,27 @@ function popup(properties,coordinates){
   for(const [tag,key] of [['span','category'],['h3','name'],['p','description'],['p','source']]){const el=document.createElement(tag);el.textContent=properties[key];if(tag==='span')el.className='popup-tag';root.append(el);}
   new maplibregl.Popup({maxWidth:'290px',offset:12}).setLngLat(coordinates).setDOMContent(root).addTo(map);
 }
+async function addStakes(){
+  const response=await fetch('./data/stakes.geojson');
+  if(!response.ok)throw new Error('No se pudieron cargar las balizas');
+  const data=await response.json();
+  const markers=data.features.map(feature=>{
+    const p=feature.properties, coordinates=feature.geometry.coordinates;
+    const button=document.createElement('button');
+    button.className='stake-marker';button.textContent=p.name;
+    button.setAttribute('aria-label',`Baliza ${p.name}`);
+    button.onclick=e=>{
+      e.stopPropagation();
+      popup({name:`Baliza ${p.name}`,category:'Red de monitoreo · GNSS',
+        description:`Medición: ${p.date.split('-').reverse().join('/')}. WGS84: ${coordinates[1].toFixed(6)}°, ${coordinates[0].toFixed(6)}°. ${p.awsSector?'B15 es también la referencia del sector AWS-Mocho; no indica la posición exacta de la estación.':''}`,
+        source:p.source},coordinates);
+    };
+    return new maplibregl.Marker({element:button,anchor:'center-left',offset:[-4,0]}).setLngLat(coordinates).addTo(map);
+  });
+  const toggle=$('#show-stakes');
+  const sync=()=>markers.forEach(marker=>{marker.getElement().hidden=!toggle.checked;marker.getElement().style.display=toggle.checked?'':'none';});
+  toggle.onchange=sync;sync();
+}
 async function init(){
   const response=await fetch('./data/study-area.json');
   if(!response.ok)throw new Error('No se pudieron cargar los datos');
@@ -59,6 +80,7 @@ async function init(){
     map.on('click',e=>{const features=map.queryRenderedFeatures(e.point,{layers:hitLayers});if(!features.length)return;const f=features.find(f=>f.source==='points')||features.find(f=>f.source==='glacier')||features[0];popup(f.properties,f.geometry.type==='Point'?f.geometry.coordinates.slice(0,2):e.lngLat);});
     map.on('mousemove',e=>{map.getCanvas().style.cursor=map.queryRenderedFeatures(e.point,{layers:hitLayers}).length?'pointer':'';});
     setMode(mode3D);
+    addStakes().catch(()=>{$('#stakes-status').textContent='No fue posible cargar las balizas. Recarga la página para reintentar.';$('#show-stakes').disabled=true;});
     window.mochoReady=true;
   });
   $('#view-3d').onclick=()=>setMode(true);$('#view-2d').onclick=()=>setMode(false);

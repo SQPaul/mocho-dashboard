@@ -1,0 +1,185 @@
+{
+  "unit": "m eq.a.",
+  "figure": 2,
+  "printedPage": 5,
+  "records": [
+    {
+      "year": 2003,
+      "period": "2003-2004",
+      "balance": -0.88,
+      "uncertainty": 0.18,
+      "sourceLabel": "Rivera, 2005",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2004,
+      "period": "2004-2005",
+      "balance": 0.36,
+      "uncertainty": 0.07,
+      "sourceLabel": "Bown, 2007",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2005,
+      "period": "2005-2006",
+      "balance": -0.68,
+      "uncertainty": null,
+      "sourceLabel": "JLR",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2006,
+      "period": "2006-2007",
+      "balance": null,
+      "uncertainty": null,
+      "sourceLabel": null,
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2007,
+      "period": "2007-2008",
+      "balance": null,
+      "uncertainty": null,
+      "sourceLabel": null,
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2008,
+      "period": "2008-2009",
+      "balance": null,
+      "uncertainty": null,
+      "sourceLabel": "JLR",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2009,
+      "period": "2009-2010",
+      "balance": 0.69,
+      "uncertainty": 0.1,
+      "sourceLabel": "Schaefer, 2017",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2010,
+      "period": "2010-2011",
+      "balance": -0.37,
+      "uncertainty": 0.11,
+      "sourceLabel": "Schaefer, 2017",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2011,
+      "period": "2011-2012",
+      "balance": -2.14,
+      "uncertainty": 0.14,
+      "sourceLabel": "Schaefer, 2017",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2012,
+      "period": "2012-2013",
+      "balance": -1.79,
+      "uncertainty": 0.11,
+      "sourceLabel": "Schaefer, 2017",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2013,
+      "period": "2013-2014",
+      "balance": null,
+      "uncertainty": null,
+      "sourceLabel": null,
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2014,
+      "period": "2014-2015",
+      "balance": null,
+      "uncertainty": null,
+      "sourceLabel": null,
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2015,
+      "period": "2015-2016",
+      "balance": -1.32,
+      "uncertainty": null,
+      "sourceLabel": "WGMS",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2016,
+      "period": "2016-2017",
+      "balance": -2.47,
+      "uncertainty": null,
+      "sourceLabel": "WGMS",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2017,
+      "period": "2017-2018",
+      "balance": -0.27,
+      "uncertainty": null,
+      "sourceLabel": "WGMS",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2018,
+      "period": "2018-2019",
+      "balance": -0.89,
+      "uncertainty": null,
+      "sourceLabel": "WGMS",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2019,
+      "period": "2019-2020",
+      "balance": -0.8,
+      "uncertainty": null,
+      "sourceLabel": "WGMS",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2020,
+      "period": "2020-2021",
+      "balance": -1.62,
+      "uncertainty": 0.31,
+      "sourceLabel": "DGA, Marius",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2021,
+      "period": "2021-2022",
+      "balance": -2.56,
+      "uncertainty": 0.24,
+      "sourceLabel": "DGA",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2022,
+      "period": "2022-2023",
+      "balance": -2.67,
+      "uncertainty": 0.3,
+      "sourceLabel": "DGA",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2023,
+      "period": "2023-2024",
+      "balance": -0.17,
+      "uncertainty": 0.06,
+      "sourceLabel": "DGA",
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2024,
+      "period": "2024-2025",
+      "balance": 0.88,
+      "uncertainty": 0.06,
+      "sourceLabel": null,
+      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+    }
+  ],
+  "source": "Informe final — Mocho 2025–2026, Figura 2, p. 5; libro original bm_hist.xlsx, identificado en Codes/Figures_glaciares_chilenos.ipynb.",
+  "note": "Los años sin balance anual son null; no equivalen a cero. Incertidumbres según columna incer, sin asignar un nivel de confianza no documentado."
+}
