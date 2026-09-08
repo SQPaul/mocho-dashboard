@@ -1,0 +1,26 @@
+.reading-note {
+  margin: 22px 0 0;
+  padding: 15px 16px 14px;
+  border-left: 2px solid #7fa18c;
+  background: #edf1e8;
+}
+.reading-note > span {
+  display: block;
+  color: #567467;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.reading-note p {
+  margin: 8px 0 0;
+  color: #64766d;
+  font-size: 10px;
+  line-height: 1.65;
+}
+.author > span { display: block; }
+.author .report-credit { margin-top: 8px; }
+.author b {
+  display: block;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 500;
+}

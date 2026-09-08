@@ -35,4 +35,4 @@ GitHub Pages: rama `main`, carpeta raíz. Las rutas relativas permiten servir el
 
 MapLibre GL JS 6.8.0 se distribuye en `vendor/`, con su licencia BSD-3-Clause. Las licencias de las bibliotecas no se aplican automáticamente a los datos del proyecto. Tipografías DM Sans y Manrope mediante Google Fonts, con alternativas del sistema.
 
-Diseño y desarrollo: [Paul Sandoval](https://github.com/SQPaul).
+Diseño y desarrollo: [Paul Sandoval-Quilodrán](https://github.com/SQPaul). Desarrollo del informe: GlacioUACh.
