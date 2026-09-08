@@ -1,5 +1,7 @@
 # Instrucciones para continuar el dashboard Mocho
 
+> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron once contornos históricos, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles, tabla y CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes ya localizadas y los tres años todavía pendientes; no repetir esas búsquedas.
+
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
 1. Trabajar en `C:\Users\pauls\mocho-dashboard`.
