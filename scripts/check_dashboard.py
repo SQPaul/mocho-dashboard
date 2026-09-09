@@ -204,6 +204,73 @@ with sync_playwright() as pw:
     page.locator('#chapter-three .variation-map-card').screenshot(path=str(out/'snow-3d.png'))
     page.locator('#chapter-three .snow-table-card').screenshot(path=str(out/'snow-table.png'))
     page.screenshot(path=str(out/'snow-desktop.png'),full_page=True)
+    # Chapter 4: rainbow velocity raster with the ten velocity stakes above it.
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoVelocityReady === true',timeout=45000)
+    page.wait_for_function('mochoVelocityMap.isStyleLoaded()')
+    page.wait_for_function('window.mochoVelocityStakesReady === true',timeout=30000)
+    page.wait_for_timeout(1200)
+    assert page.locator('body.chapter-four').count()==1
+    assert page.locator('#chapter-label').inner_text()=='04 Cinemática glaciar'
+    assert page.locator('#velocity-title').inner_text()=='El hielo avanza\nfluyamos con él'
+    assert page.locator('#chapter-four').is_visible() and page.locator('#chapter-three').is_hidden()
+    assert page.evaluate('mochoVelocityMap.getTerrain()') is not None
+    assert page.evaluate('mochoVelocityMap.getPitch()')>40
+    assert page.locator('#velocity-map canvas').is_visible()
+    velocity_manifest=page.evaluate("fetch('./data/velocity-2025-2026.json').then(r=>r.json())")
+    assert velocity_manifest['period']['label']=='OCT 2025–ABR 2026',velocity_manifest
+    assert velocity_manifest['unit']=='m/a' and velocity_manifest['palette']=='rainbow',velocity_manifest
+    assert velocity_manifest['colorScale']=={
+        'min':0.0,'max':30.0,'ticks':[0,5,10,15,20,25,30],
+        'stops':velocity_manifest['colorScale']['stops']
+    },velocity_manifest
+    assert 0.89<velocity_manifest['image']['rasterMin']<0.90,velocity_manifest
+    assert 28.57<velocity_manifest['image']['rasterMax']<28.58,velocity_manifest
+    assert len(velocity_manifest['image']['imageCoordinates'])==4,velocity_manifest
+    assert len(velocity_manifest['stakes']['features'])==10,velocity_manifest
+    assert {f['properties']['name'] for f in velocity_manifest['stakes']['features']}=={'B8','B10','B11','B12','B13','B14','B15','B17','B18','B19'},velocity_manifest
+    b11_feature=next(f for f in velocity_manifest['stakes']['features'] if f['properties']['name']=='B11')
+    assert b11_feature['properties']=={'name':'B11','sourceName':'B11_2024-2025','period':'2024–2025','velocityMPerYear':0.8899},b11_feature
+    assert page.locator('#velocity-scale-ticks').inner_text().split()==['0','5','10','15','20','25','30']
+    assert 'linear-gradient' in page.locator('#velocity-colorbar').evaluate("node=>getComputedStyle(node).backgroundImage")
+    assert page.evaluate("mochoVelocityMap.getLayer('velocity-raster').type")=='raster'
+    velocity_layer_order=page.evaluate("mochoVelocityMap.getStyle().layers.map(layer=>layer.id)")
+    assert velocity_layer_order.index('satellite')<velocity_layer_order.index('velocity-raster')<velocity_layer_order.index('velocity-stake-dot'),velocity_layer_order
+    velocity_stake_placement=page.evaluate('''async () => {
+      const data=await (await fetch('./data/velocity-2025-2026.json')).json();
+      return data.stakes.features.map(f=>{
+        const p=mochoVelocityMap.project(f.geometry.coordinates);
+        return {id:f.id,x:p.x,y:p.y,hit:mochoVelocityMap.queryRenderedFeatures([[p.x-8,p.y-8],[p.x+8,p.y+8]],{layers:['velocity-stake-dot']}).some(h=>h.properties.name===f.id)};
+      });
+    }''')
+    assert all(point['hit'] for point in velocity_stake_placement),velocity_stake_placement
+    b13=next(point for point in velocity_stake_placement if point['id']=='B13')
+    velocity_box=page.locator('#velocity-map').bounding_box()
+    page.mouse.click(velocity_box['x']+b13['x'],velocity_box['y']+b13['y'])
+    page.get_by_role('heading',name='Baliza B13',exact=True).wait_for()
+    velocity_popup=page.locator('.maplibregl-popup-content').inner_text()
+    assert 'VELOCIDAD ANUAL · 2025–2026' in velocity_popup,velocity_popup
+    assert '28,57 m/a' in velocity_popup,velocity_popup
+    assert 'GNSS · DGA–UACh' in velocity_popup,velocity_popup
+    page.locator('.maplibregl-popup-close-button').click()
+    b11=next(point for point in velocity_stake_placement if point['id']=='B11')
+    page.mouse.click(velocity_box['x']+b11['x'],velocity_box['y']+b11['y'])
+    page.get_by_role('heading',name='Baliza B11',exact=True).wait_for()
+    velocity_popup=page.locator('.maplibregl-popup-content').inner_text()
+    assert 'VELOCIDAD ANUAL · 2024–2025' in velocity_popup,velocity_popup
+    assert '0,89 m/a' in velocity_popup,velocity_popup
+    page.locator('#chapter-four .variation-map-card').screenshot(path=str(out/'velocity-stake-popup.png'))
+    page.locator('.maplibregl-popup-close-button').click()
+    page.locator('#velocity-view-2d').click()
+    page.wait_for_function('mochoVelocityMap.getPitch()<1')
+    assert page.evaluate('mochoVelocityMap.getTerrain()') is None
+    page.locator('#velocity-view-3d').click()
+    page.wait_for_function('mochoVelocityMap.getPitch()>50')
+    page.locator('#chapter-four .variation-map-card').screenshot(path=str(out/'velocity-3d.png'))
+    page.screenshot(path=str(out/'velocity-desktop.png'),full_page=True)
+    page.locator('#chapter-four .back-link').click()
+    page.wait_for_function("document.body.classList.contains('chapter-three')")
+    assert page.locator('#snow-map canvas').is_visible()
     page.locator('#chapter-three .back-link').click()
     page.wait_for_function("document.body.classList.contains('chapter-two')")
     assert page.locator('#variation-map canvas').is_visible()
@@ -286,6 +353,13 @@ with sync_playwright() as pw:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 3 mobile overflow'
     assert page.locator('#snow-map').bounding_box()['height']>=390
     page.locator('#chapter-three .variation-map-card').screenshot(path=str(out/'snow-mobile.png'))
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoVelocityReady === true',timeout=30000)
+    page.wait_for_timeout(600)
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 4 mobile overflow'
+    assert page.locator('#velocity-map').bounding_box()['height']>=390
+    page.locator('#chapter-four .variation-map-card').screenshot(path=str(out/'velocity-mobile.png'))
+    page.locator('#chapter-four .back-link').click()
     page.locator('#chapter-three .back-link').click()
     page.locator('#chapter-two .back-link').click()
     assert not errors, errors
@@ -305,6 +379,11 @@ with sync_playwright() as pw:
     assert fallback.locator('#snow-view-3d').is_disabled()
     assert fallback.evaluate('mochoSnowMap.getTerrain()') is None
     fallback.wait_for_function('mochoSnowMap.isStyleLoaded()')
+    fallback.locator('.chapter-nav').click()
+    fallback.wait_for_function('window.mochoVelocityReady === true',timeout=30000)
+    assert fallback.locator('#velocity-view-3d').is_disabled()
+    assert fallback.evaluate('mochoVelocityMap.getTerrain()') is None
+    fallback.wait_for_function('mochoVelocityMap.isStyleLoaded()')
     # Failed chapter 2 assets must report their failure and preserve chapter 1.
     for asset,selector,expected in [
         ('icecap-history.geojson','#variation-map-message','datos del mapa'),
@@ -343,9 +422,28 @@ with sync_playwright() as pw:
     broken.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2024',exact=True).check()
     assert broken.evaluate("mochoSnowMap.getLayoutProperty('gpr-2024','visibility')")=='visible'
     broken.close()
+    # Failed velocity assets must preserve the chapter shell and the earlier chapters.
+    broken=browser.new_page()
+    broken.on('pageerror',lambda e:errors.append(str(e)))
+    broken.route('**/data/velocity-2025-2026.json',lambda route:route.abort())
+    broken.goto(url+'#capitulo-4',wait_until='networkidle')
+    broken.wait_for_function("document.querySelector('#velocity-map-message').textContent.includes('datos de velocidad')")
+    assert broken.locator('#velocity-map canvas').is_visible()
+    broken.locator('#chapter-four .back-link').click()
+    broken.wait_for_function('window.mochoSnowReady===true')
+    assert broken.locator('#snow-map canvas').is_visible()
+    broken.close()
+    broken=browser.new_page()
+    broken.on('pageerror',lambda e:errors.append(str(e)))
+    broken.route('**/data/velocity-202510-202604.webp',lambda route:route.abort())
+    broken.goto(url+'#capitulo-4',wait_until='networkidle')
+    broken.wait_for_function("document.querySelector('#velocity-map-message').textContent.includes('raster de velocidad')")
+    broken.wait_for_function('window.mochoVelocityStakesReady===true')
+    assert broken.evaluate("mochoVelocityMap.getLayer('velocity-stake-dot').type")=='circle'
+    broken.close()
     assert not errors, errors
     fallback.wait_for_timeout(500)
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','ten GPR stake markers','stake thickness for every campaign','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','ten GPR stake markers','stake thickness for every campaign','GPR summary table','GPR asset fallback','chapter 4 hash navigation','rainbow velocity scale 0-30 m/a','ten velocity stake markers','B11 2024-2025 period','velocity asset fallback'],'pageErrors':errors},ensure_ascii=True))
