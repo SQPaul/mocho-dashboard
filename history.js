@@ -2,6 +2,10 @@ const $ = s => document.querySelector(s);
 const ns = 'http://www.w3.org/2000/svg';
 const number = n => n.toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:2});
 const signed = n => `${n > 0 ? '+' : ''}${number(n)}`;
+$('.history-jump')?.addEventListener('click', event => {
+  event.preventDefault();
+  $('#balance-historico').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
+});
 function svgNode(tag, attrs, text) {
   const el = document.createElementNS(ns, tag);
   for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);

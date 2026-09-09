@@ -49,6 +49,10 @@ with sync_playwright() as pw:
     assert all(p['hit'] for p in placement), placement
     page.wait_for_selector('#history-content:not([hidden])')
     assert page.locator('#history-chart [data-year]').count()==22
+    assert page.locator('.history-jump').is_visible()
+    page.locator('.history-jump').click()
+    page.wait_for_function("document.querySelector('#history-title').getBoundingClientRect().top < innerHeight")
+    assert page.locator('#history-chart').is_visible()
     assert page.locator('#history-table').count()==0
     assert page.locator('#history-download').is_visible()
     colors=page.evaluate("""({
