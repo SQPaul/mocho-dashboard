@@ -82,7 +82,7 @@ with sync_playwright() as pw:
       loss:getComputedStyle(document.querySelector('.negative .balance-bar')).fill
     })""")
     assert colors=={'gain':'rgb(57, 123, 179)','loss':'rgb(197, 83, 77)'},colors
-    page.locator('#history-chart [data-year="2025"]').focus()
+    page.locator('#history-chart [data-year="2025"]').click()
     assert page.locator('#history-year').inner_text()=='2025-2026'
     assert page.locator('#history-value').inner_text()=='-3,38 m eq.a.'
     assert '± 0,14 m eq.a.' in page.locator('#history-detail').inner_text()
@@ -268,6 +268,39 @@ with sync_playwright() as pw:
     page.wait_for_function('mochoVelocityMap.getPitch()>50')
     page.locator('#chapter-four .variation-map-card').screenshot(path=str(out/'velocity-3d.png'))
     page.screenshot(path=str(out/'velocity-desktop.png'),full_page=True)
+    # Chapter 5: one ordered photograph per row with continuous viewport focus.
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoAlbumReady === true',timeout=30000)
+    page.wait_for_timeout(500)
+    assert page.locator('body.chapter-five').count()==1
+    assert page.locator('#chapter-label').inner_text()=='05 Las personas tras el dato'
+    assert page.locator('#album-title').inner_text()=='La ciencia se construye con datos, pero la hacen las personas.'
+    assert page.locator('#chapter-five').is_visible() and page.locator('#chapter-four').is_hidden()
+    assert page.locator('#album-list .album-item').count()==7
+    assert page.locator('#album-list img').count()==7
+    assert page.locator('#album-list figcaption').count()==0
+    album_manifest=page.evaluate("fetch('./data/album.json').then(r=>r.json())")
+    assert album_manifest['count']==7,album_manifest
+    assert [row['order'] for row in album_manifest['photographs']]==[1,2,3,4,5,6,7],album_manifest
+    assert [row['src'] for row in album_manifest['photographs']]==[f'album-{i:02}.webp' for i in range(1,8)],album_manifest
+    assert page.locator('#album-list img').evaluate_all("nodes=>nodes.map(node=>node.getAttribute('src'))")==[f'./data/album-{i:02}.webp' for i in range(1,8)]
+    album_layout=page.locator('#album-list .album-item').evaluate_all("""nodes=>nodes.map(node=>{const box=node.getBoundingClientRect();return {x:box.x,y:box.y,width:box.width,height:box.height,center:box.x+box.width/2}})""")
+    assert all(album_layout[i]['y']+album_layout[i]['height']<album_layout[i+1]['y'] for i in range(6)),album_layout
+    assert max(row['center'] for row in album_layout)-min(row['center'] for row in album_layout)<1,album_layout
+    assert min(row['width'] for row in album_layout)>900,album_layout
+    title_lines=page.locator('#album-title').evaluate("node=>{const range=document.createRange();range.selectNodeContents(node);return range.getClientRects().length}")
+    assert title_lines==1,title_lines
+    page.screenshot(path=str(out/'album-top.png'),full_page=False)
+    page.evaluate("""()=>{const item=document.querySelector('.album-item[data-order="4"]'),box=item.getBoundingClientRect();scrollTo(0,scrollY+box.top+box.height/2-innerHeight/2)}""")
+    page.wait_for_timeout(450)
+    album_focus=page.locator('#album-list .album-item').evaluate_all("""nodes=>nodes.map(node=>({order:+node.dataset.order,active:node.classList.contains('is-active'),focus:+getComputedStyle(node).getPropertyValue('--focus'),opacity:+getComputedStyle(node).opacity}))""")
+    assert [row['order'] for row in album_focus if row['active']]==[4],album_focus
+    assert album_focus[3]['focus']>.98 and album_focus[3]['opacity']>.98,album_focus
+    assert album_focus[0]['focus']==0 and album_focus[0]['opacity']<album_focus[3]['opacity'],album_focus
+    page.screenshot(path=str(out/'album-focus.png'),full_page=False)
+    page.locator('#chapter-five .back-link').click()
+    page.wait_for_function("document.body.classList.contains('chapter-four')")
+    assert page.locator('#velocity-map canvas').is_visible()
     page.locator('#chapter-four .back-link').click()
     page.wait_for_function("document.body.classList.contains('chapter-three')")
     assert page.locator('#snow-map canvas').is_visible()
@@ -292,6 +325,7 @@ with sync_playwright() as pw:
     assert page.evaluate("mochoMap.getLayoutProperty('glacier-fill','visibility')")=='none'
     page.get_by_role('checkbox',name='Mostrar glaciar Mocho',exact=True).check()
     assert page.evaluate("mochoMap.getLayoutProperty('glacier-fill','visibility')")=='visible'
+    page.wait_for_timeout(400)
     polygon_points=page.evaluate("""()=>{
       const canvas=mochoMap.getCanvas(),found={};
       for(let y=80;y<canvas.clientHeight-80;y+=12)for(let x=80;x<canvas.clientWidth-80;x+=12){
@@ -359,6 +393,21 @@ with sync_playwright() as pw:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 4 mobile overflow'
     assert page.locator('#velocity-map').bounding_box()['height']>=390
     page.locator('#chapter-four .variation-map-card').screenshot(path=str(out/'velocity-mobile.png'))
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoAlbumReady === true',timeout=30000)
+    page.wait_for_timeout(500)
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 5 mobile overflow'
+    assert page.locator('#album-list .album-item').count()==7
+    assert page.locator('#album-title').evaluate("node=>{const range=document.createRange();range.selectNodeContents(node);return range.getClientRects().length}")==1
+    mobile_album_layout=page.locator('#album-list .album-item').evaluate_all("""nodes=>nodes.map(node=>{const box=node.getBoundingClientRect();return {y:box.y,width:box.width,center:box.x+box.width/2}})""")
+    assert all(mobile_album_layout[i]['y']<mobile_album_layout[i+1]['y'] for i in range(6)),mobile_album_layout
+    assert max(row['center'] for row in mobile_album_layout)-min(row['center'] for row in mobile_album_layout)<1,mobile_album_layout
+    page.screenshot(path=str(out/'album-mobile-top.png'),full_page=False)
+    page.evaluate("""()=>{const item=document.querySelector('.album-item[data-order="3"]'),box=item.getBoundingClientRect();scrollTo(0,scrollY+box.top+box.height/2-innerHeight/2)}""")
+    page.wait_for_timeout(400)
+    assert page.locator('.album-item.is-active').get_attribute('data-order')=='3'
+    page.screenshot(path=str(out/'album-mobile.png'),full_page=False)
+    page.locator('#chapter-five .back-link').click()
     page.locator('#chapter-four .back-link').click()
     page.locator('#chapter-three .back-link').click()
     page.locator('#chapter-two .back-link').click()
@@ -384,6 +433,9 @@ with sync_playwright() as pw:
     assert fallback.locator('#velocity-view-3d').is_disabled()
     assert fallback.evaluate('mochoVelocityMap.getTerrain()') is None
     fallback.wait_for_function('mochoVelocityMap.isStyleLoaded()')
+    fallback.locator('.chapter-nav').click()
+    fallback.wait_for_function('window.mochoAlbumReady === true',timeout=30000)
+    assert fallback.locator('#album-list .album-item').count()==7
     # Failed chapter 2 assets must report their failure and preserve chapter 1.
     for asset,selector,expected in [
         ('icecap-history.geojson','#variation-map-message','datos del mapa'),
@@ -441,9 +493,19 @@ with sync_playwright() as pw:
     broken.wait_for_function('window.mochoVelocityStakesReady===true')
     assert broken.evaluate("mochoVelocityMap.getLayer('velocity-stake-dot').type")=='circle'
     broken.close()
+    # Failed album manifest stays isolated to chapter 5 and permits returning to chapter 4.
+    broken=browser.new_page()
+    broken.on('pageerror',lambda e:errors.append(str(e)))
+    broken.route('**/data/album.json',lambda route:route.abort())
+    broken.goto(url+'#capitulo-5',wait_until='networkidle')
+    broken.wait_for_function("document.querySelector('#album-loading').textContent.includes('No fue posible cargar el álbum')")
+    broken.locator('#chapter-five .back-link').click()
+    broken.wait_for_function('window.mochoVelocityReady===true')
+    assert broken.locator('#velocity-map canvas').is_visible()
+    broken.close()
     assert not errors, errors
     fallback.wait_for_timeout(500)
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','ten GPR stake markers','stake thickness for every campaign','GPR summary table','GPR asset fallback','chapter 4 hash navigation','rainbow velocity scale 0-30 m/a','ten velocity stake markers','B11 2024-2025 period','velocity asset fallback'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','ten GPR stake markers','stake thickness for every campaign','GPR summary table','GPR asset fallback','chapter 4 hash navigation','rainbow velocity scale 0-30 m/a','ten velocity stake markers','B11 2024-2025 period','velocity asset fallback','chapter 5 hash navigation','seven ordered album photographs','one-column natural aspect layout','single-line album title','continuous centered-photo focus','album mobile layout','album asset fallback'],'pageErrors':errors},ensure_ascii=True))

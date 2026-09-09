@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="./variations.css">
 <link rel="stylesheet" href="./snow.css">
 <link rel="stylesheet" href="./velocity.css">
+<link rel="stylesheet" href="./album.css">
 </head>
 <body>
 <header class="masthead">
@@ -76,6 +77,11 @@
 <div class="map-actions"><button id="velocity-reset-view" aria-label="Volver a la vista inicial de cinemática glaciar">⌖</button><button id="velocity-zoom-in" aria-label="Acercar cinemática glaciar">+</button><button id="velocity-zoom-out" aria-label="Alejar cinemática glaciar">−</button><button id="velocity-rotate-view" aria-label="Girar cinemática glaciar">↻</button><button id="velocity-fullscreen" aria-label="Ampliar cinemática glaciar a pantalla completa">⛶</button></div>
 <div class="map-message" id="velocity-map-message" role="status">Preparando la velocidad glaciar…</div><div class="map-bottom"><div class="imagery-label"><span>VELOCIDAD SUPERFICIAL</span><strong>GNSS · m/a</strong><small>OCT 2025–ABR 2026</small></div><div class="map-hint">Arrastra para explorar · Ctrl + arrastrar para girar</div></div>
 </div><div class="velocity-legend" aria-label="Escala rainbow de velocidad anual entre cero y treinta metros por año"><span>VELOCIDAD ANUAL · m/a</span><div class="velocity-colorbar" id="velocity-colorbar"></div><div class="velocity-scale-ticks" id="velocity-scale-ticks"></div><p class="velocity-selection" id="velocity-selection"></p></div><p class="velocity-note">Velocidad superficial anualizada a partir del movimiento GNSS. El raster representa OCT 2025–ABR 2026; la baliza B11 corresponde al período 2024–2025. Fuente: DGA–UACh.</p></section>
+</section>
+<section class="album-page" id="chapter-five" aria-labelledby="album-title" hidden>
+<div class="album-intro"><div class="variation-top"><a href="#capitulo-4" data-go-chapter="4" class="back-link">← Cinemática glaciar</a><span class="history-index">05</span></div>
+<p class="eyebrow">CAPÍTULO 5 · LAS PERSONAS TRAS EL DATO</p><h1 class="album-title" id="album-title">La ciencia se construye con datos, pero la hacen las personas.</h1></div>
+<div class="album-list" id="album-list" aria-label="Álbum fotográfico del equipo"><p class="album-loading" id="album-loading" role="status">Preparando el álbum…</p></div>
 </section>
 <dialog id="sources-dialog"><div class="dialog-heading"><p class="eyebrow">TRAZABILIDAD</p><button id="close-sources" aria-label="Cerrar fuentes">×</button></div><h2>Detrás del mapa.</h2><p>Base documental: <b>Informe final — Mocho 2025–2026, versión final</b>, sección 1.1 y Tabla 1 (páginas impresas 3–4).</p><dl><dt>Geometrías e imagen</dt><dd>Anexos Digitales, anexo 2: delimitaciones e imagen Sentinel-2 del 10/03/2026. La vegetación aparece rojiza por la composición en falso color.</dd><dt>Cifras de referencia</dt><dd>Superficie y perímetro de 2026 según el Anexo 2. Elevaciones según DEM Pléiades del 15/03/2020. Se conservan los valores publicados; no se recalculan a partir del relieve de visualización.</dd><dt>Estaciones y cumbres</dt><dd>AWS Mocho1, AWS Mocho2 y AWS DGA proceden de estaciones.gpkg. EMAM-Mocho conserva la posición de la baliza B15. Las cumbres Mocho y Choshuenco proceden de cumbres.shp.</dd><dt>Relieve 3D</dt><dd>Modelo de contexto de <a href="https://mapterhorn.com/attribution/" target="_blank" rel="noopener">Mapterhorn</a>, independiente de los DEM científicos del proyecto. Exageración vertical 1×.</dd><dt>Cartografía web</dt><dd>WGS84. Capas originales en UTM 18S reproyectadas para el navegador. Visualización con MapLibre GL JS.</dd></dl><p class="dialog-note">Primera entrega del atlas: área de estudio. Referencias históricas de clima: temperatura media anual de 2,6 °C y precipitación anual aproximada de 4.000 mm (Schaefer et al., 2017, citado en sección 1.1).</p></dialog>
 <script type="module" src="./app.js"></script>

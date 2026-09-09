@@ -1,13 +1,13 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Estado final: los cuatro capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–17 m y el capítulo 4 añade el raster de velocidad OCT 2025–ABR 2026 con paleta rainbow 0–30 m/a y diez balizas consultables. La interfaz muestra títulos sin números de figura, no enlaza a GitHub y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Estado final: los capítulos 1 a 5 están completos. Los cuatro capítulos cartográficos reutilizan `map-common.js`; el capítulo 5 cierra el atlas con siete fotografías en una columna vertical, sin títulos ni pies, y foco progresivo según el centro del viewport. La interfaz muestra títulos sin números de figura, no enlaza a GitHub y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
 1. Trabajar en `C:\Users\pauls\mocho-dashboard`.
 2. Leer `PROJECT_CONTEXT.md`, `README.md` y este archivo; ejecutar `git status --short`.
 3. Conservar las modificaciones existentes; los capítulos publicados son trabajo validado. No reiniciar ni sobrescribir el repositorio.
-4. Los capítulos 1, 2, 3 y 4 están terminados. Continuar solo a partir de una solicitud nueva del usuario.
+4. Los capítulos 1 a 5 están terminados. Continuar solo a partir de una solicitud nueva del usuario.
 5. Mantener fondo marfil, verdes apagados, tipografía editorial, firma de Paul Sandoval-Quilodrán y crédito GlacioUACh. Conservar la aplicación estática, sin compilación ni claves API, compatible con GitHub Pages.
 
 ## 2. Usar las fuentes ya identificadas
@@ -124,17 +124,18 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 ## 8. Verificar antes de dar el trabajo por terminado
 
 1. Servir el sitio: `python -m http.server 8000 --bind 127.0.0.1`. Comprobar antes si el puerto ya está ocupado: podría seguir activo el servidor de la sesión anterior.
-2. Ejecutar `scripts/check_dashboard.py`, que usa Playwright/Edge y cubre los cuatro capítulos.
+2. Ejecutar `scripts/check_dashboard.py`, que usa Playwright/Edge y cubre los cinco capítulos.
 3. Comprobar capítulo 1: mapa 3D/2D, capas, cuatro estaciones, dos cumbres, diez balizas, fichas, prioridad B15/EMAM-Mocho, gráfico, filtros, teclado e incertidumbre, sin tabla ni CSV en la Figura 2.
-4. Comprobar navegación: siguiente/anterior, URL directa a los capítulos 2, 3 y 4, recarga, Atrás/Adelante, foco y regreso a cada mapa sin quedar en blanco.
+4. Comprobar navegación: siguiente/anterior, URL directa a los capítulos 2 a 5, recarga, Atrás/Adelante, foco y regreso a cada vista sin quedar en blanco.
 5. Comprobar la serie histórica: 17 y 12 observaciones, extremos documentados, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
 6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.
 7. Comprobar capítulo 3: cinco campañas exclusivas, escala Blues 0–17 m, tabla de cinco filas, relieve 3D/2D y fallos aislados de manifiesto o raster.
 8. Comprobar capítulo 4: raster rainbow 0–30 m/a, diez balizas sobre el raster, B11 como único punto 2024–2025, fichas de velocidad, relieve 3D/2D y fallos aislados de manifiesto o raster.
-9. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico o tabla sí es aceptable.
-10. Probar fallos de carga de JSON, imágenes y relieve externo. Un fallo en un capítulo no debe impedir abrir los demás.
-11. Usar la habilidad de navegador si está disponible; el proyecto dispone de su comprobador local como alternativa.
-12. Actualizar `README.md` y `PROJECT_CONTEXT.md`, revisar `git diff`, publicar un único commit en `main` y verificar `https://sqpaul.github.io/mocho-dashboard/`.
+9. Comprobar capítulo 5: siete fotos en orden, una sola columna, proporción natural, título en una línea, foco progresivo en la imagen central, diseño móvil y fallo aislado del manifiesto.
+10. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico o tabla sí es aceptable.
+11. Probar fallos de carga de JSON, imágenes y relieve externo. Un fallo en un capítulo no debe impedir abrir los demás.
+12. Usar la habilidad de navegador si está disponible; el proyecto dispone de su comprobador local como alternativa.
+13. Actualizar `README.md` y `PROJECT_CONTEXT.md`, revisar `git diff`, publicar un único commit en `main` y verificar `https://sqpaul.github.io/mocho-dashboard/`.
 
 ## 9. Evitar trabajo innecesario y problemas del entorno
 
@@ -148,4 +149,4 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 
 ## Mensaje para entregar al siguiente modelo
 
-> Lee `CONTINUAR_DASHBOARD.md`, `PROJECT_CONTEXT.md` y `README.md`. Los capítulos 1, 2, 3 y 4 están completos; conserva las implementaciones y fuentes verificadas. Continúa únicamente desde una nueva solicitud del usuario, prueba el resultado y publica solo derivados web necesarios.
+> Lee `CONTINUAR_DASHBOARD.md`, `PROJECT_CONTEXT.md` y `README.md`. Los capítulos 1 a 5 están completos; conserva las implementaciones y fuentes verificadas. Continúa únicamente desde una nueva solicitud del usuario, prueba el resultado y publica solo derivados web necesarios.

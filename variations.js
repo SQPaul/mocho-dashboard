@@ -1,6 +1,7 @@
 import {createTerrainMap,bindMapControls,showPopup,reduced} from './map-common.js';
 import {initSnowChapter,getSnowMap} from './snow.js';
 import {initVelocityChapter,getVelocityMap} from './velocity.js';
+import {initAlbumChapter,refreshAlbumFocus} from './album.js';
 const el = s => document.querySelector(s);
 const svgNS = 'http://www.w3.org/2000/svg';
 const fmt = n => n.toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:3});
@@ -97,15 +98,16 @@ function setupVariationChart() {
 }
 async function json(url){const r=await fetch(url);if(!r.ok)throw new Error(url);return r.json();}
 function chapter(n,push=true){
-  if(![1,2,3,4].includes(n))n=1;
-  const two=n===2,three=n===3,four=n===4,first=el('.workspace'),second=el('#chapter-two'),third=el('#chapter-three'),fourth=el('#chapter-four');
-  document.body.classList.toggle('chapter-two',two);document.body.classList.toggle('chapter-three',three);document.body.classList.toggle('chapter-four',four);
-  first.hidden=n!==1;second.hidden=!two;third.hidden=!three;fourth.hidden=!four;first.inert=n!==1;second.inert=!two;third.inert=!three;fourth.inert=!four;
+  if(![1,2,3,4,5].includes(n))n=1;
+  const two=n===2,three=n===3,four=n===4,five=n===5,first=el('.workspace'),second=el('#chapter-two'),third=el('#chapter-three'),fourth=el('#chapter-four'),fifth=el('#chapter-five');
+  document.body.classList.toggle('chapter-two',two);document.body.classList.toggle('chapter-three',three);document.body.classList.toggle('chapter-four',four);document.body.classList.toggle('chapter-five',five);
+  first.hidden=n!==1;second.hidden=!two;third.hidden=!three;fourth.hidden=!four;fifth.hidden=!five;first.inert=n!==1;second.inert=!two;third.inert=!three;fourth.inert=!four;fifth.inert=!five;
   const settings={
     1:{label:'<span>01</span> Área de estudio',nav:'Variaciones →',go:2,title:'Mocho · Atlas del glaciar'},
     2:{label:'<span>02</span> Variaciones de glaciares',nav:'Manto nival →',go:3,title:'Mocho · Variaciones de glaciares'},
     3:{label:'<span>03</span> Caracterización del manto nival',nav:'Cinemática glaciar →',go:4,title:'Mocho · Caracterización del manto nival'},
-    4:{label:'<span>04</span> Cinemática glaciar',nav:'← Manto nival',go:3,title:'Mocho · Cinemática glaciar'}
+    4:{label:'<span>04</span> Cinemática glaciar',nav:'Las personas →',go:5,title:'Mocho · Cinemática glaciar'},
+    5:{label:'<span>05</span> Las personas tras el dato',nav:'← Cinemática',go:4,title:'Mocho · Las personas tras el dato'}
   }[n];
   el('#chapter-label').innerHTML=settings.label;
   const nav=el('.chapter-nav');nav.textContent=settings.nav;nav.dataset.goChapter=settings.go;nav.href=`#capitulo-${settings.go}`;
@@ -121,9 +123,10 @@ function chapter(n,push=true){
   }
   if(three)initSnowChapter();
   if(four)initVelocityChapter();
-  const target=four?fourth:three?third:two?second:first,title=target.querySelector('h1');title.tabIndex=-1;title.focus({preventScroll:true});
+  if(five)initAlbumChapter();
+  const target=five?fifth:four?fourth:three?third:two?second:first,title=target.querySelector('h1');title.tabIndex=-1;title.focus({preventScroll:true});
   if(push&&!reduced)target.animate([{transform:`translateX(${n===1?-24:24}px)`,opacity:.5},{transform:'translateX(0)',opacity:1}],{duration:220});
-  window.scrollTo(0,0);requestAnimationFrame(()=>{(four?getVelocityMap():three?getSnowMap():two?variationMap:window.mochoMap)?.resize();});
+  window.scrollTo(0,0);requestAnimationFrame(()=>{if(five)refreshAlbumFocus();else (four?getVelocityMap():three?getSnowMap():two?variationMap:window.mochoMap)?.resize();});
 }
-function syncChapter(){const match=location.hash.match(/^#capitulo-([1234])$/);chapter(match?+match[1]:1,false);}
+function syncChapter(){const match=location.hash.match(/^#capitulo-([12345])$/);chapter(match?+match[1]:1,false);}
 window.addEventListener('hashchange',syncChapter);window.addEventListener('popstate',syncChapter);document.querySelectorAll('[data-go-chapter]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();chapter(+a.dataset.goChapter);}));syncChapter();
