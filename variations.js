@@ -34,7 +34,7 @@ function setupContourMap() {
     syncContours();if(!nav.terrainFailed&&!message.classList.contains('notice'))message.classList.add('hidden');
     const hits=p=>variationMap.queryRenderedFeatures([[p.x-5,p.y-5],[p.x+5,p.y+5]],{layers:mapData.availableYears.map(y=>`contour-${y}`)});
     variationMap.on('mousemove',e=>{variationMap.getCanvas().style.cursor=hits(e.point).length?'pointer':'';});
-    variationMap.on('click',e=>{const found=[...new Set(hits(e.point).map(f=>f.properties.year))];if(found.length){inspectContour(found[0],e.lngLat);if(found.length>1)el('#contour-detail').textContent+=` Contornos cercanos: ${found.join(', ')}. Usa «Consultar año» para elegir.`;}});
+    variationMap.on('click',e=>{const found=[...new Set(hits(e.point).map(f=>f.properties.year))];if(found.length)inspectContour(found[0],e.lngLat);});
     window.mochoVariationReady=true;
   });
 }
@@ -47,9 +47,9 @@ function syncContours(){
 function inspectContour(year,coordinates){
   const f=mapData.features.find(f=>f.properties.year===year);if(!f)return;
   selectedContours.add(year);syncContours();el('#contour-select').value=year;
-  const p=f.properties,description=p.area===null?'Sin superficie publicada para este año.':`Superficie publicada: ${fmt(p.area)} ± ${fmt(p.error)} km².`;
-  el('#contour-detail').textContent=`${year} · ${description} Archivo: ${p.source.split('/').at(-1)} · ${p.sourceCrs}.`;
-  if(coordinates)showPopup(variationMap,{name:`Capa de hielo · ${year}`,category:'Delimitación histórica',description,source:`Archivo: ${p.source.split('/').at(-1)} · ${p.sourceCrs}`},coordinates);
+  const p=f.properties,description=p.area===null?'Área e incertidumbre no disponibles.':`Área ${fmt(p.area)} km² · Incertidumbre ± ${fmt(p.error)} km².`;
+  el('#contour-detail').textContent=`${year} · ${description}`;
+  if(coordinates)showPopup(variationMap,{name:String(year),description},coordinates);
 }
 function setupVariationChart() {
   const chart=el('#variation-chart'),start=el('#variation-start'),end=el('#variation-end'),errors=el('#variation-errors');

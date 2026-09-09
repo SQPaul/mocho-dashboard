@@ -21,6 +21,8 @@ with sync_playwright() as pw:
     page.wait_for_timeout(1600)
     assert page.locator('#fallback').is_hidden()
     assert page.locator('.monitoring').count()==0
+    assert page.locator('a[href*="github.com"]').count()==0
+    assert page.locator('.author-name').inner_text()=='Paul Sandoval-Quilodrán'
     terrain=page.evaluate('({pitch:mochoMap.getPitch(),terrain:mochoMap.getTerrain(),elevation:mochoMap.queryTerrainElevation([-72.025,-39.933])})')
     assert terrain['terrain'] is not None, terrain
     assert terrain['elevation'] and terrain['elevation']>1000, terrain
@@ -117,11 +119,12 @@ with sync_playwright() as pw:
     page.get_by_role('checkbox',name='Mostrar contorno 2005',exact=True).uncheck()
     assert page.evaluate("mochoVariationMap.getLayoutProperty('contour-2005','visibility')")=='none'
     page.locator('#contour-select').select_option('1976')
-    assert 'Surface1976_v2024.shp' in page.locator('#contour-detail').inner_text()
+    assert page.locator('#contour-detail').inner_text()=='1976 · Área 28,175 km² · Incertidumbre ± 3,481 km².'
     page.locator('#contour-select').select_option('1986')
-    assert 'Surface_1986.shp' in page.locator('#contour-detail').inner_text()
+    assert page.locator('#contour-detail').inner_text()=='1986 · Área 22,394 km² · Incertidumbre ± 1,279 km².'
     page.locator('#contour-select').select_option('2015')
-    assert 'Mocho 20150411.shp' in page.locator('#contour-detail').inner_text()
+    assert page.locator('#contour-detail').inner_text()=='2015 · Área 15,253 km² · Incertidumbre ± 0,697 km².'
+    assert 'Archivo:' not in page.locator('#contour-detail').inner_text() and 'EPSG:' not in page.locator('#contour-detail').inner_text()
     page.locator('#variation-view-3d').click()
     page.wait_for_function('mochoVariationMap.getPitch()>50')
     page.locator('#variation-start').select_option('2026')
@@ -156,10 +159,10 @@ with sync_playwright() as pw:
     assert page.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2025',exact=True).is_checked()
     snow_manifest=page.evaluate("fetch('./data/gpr-campaigns.json').then(r=>r.json())")
     assert [row['year'] for row in snow_manifest['campaigns']]==[2021,2022,2023,2024,2025],snow_manifest
-    assert snow_manifest['colorScale']['min']==0 and snow_manifest['colorScale']['max']==18,snow_manifest
-    assert snow_manifest['colorScale']['ticks']==[0,3,6,9,12,15,18],snow_manifest
+    assert snow_manifest['colorScale']['min']==0 and snow_manifest['colorScale']['max']==17,snow_manifest
+    assert snow_manifest['colorScale']['ticks']==[0,3,6,9,12,15,17],snow_manifest
     assert all(len(row['imageCoordinates'])==4 for row in snow_manifest['campaigns']),snow_manifest
-    assert page.locator('#snow-scale-ticks').inner_text().split()==['0','3','6','9','12','15','18']
+    assert page.locator('#snow-scale-ticks').inner_text().split()==['0','3','6','9','12','15','17']
     assert 'linear-gradient' in page.locator('#snow-colorbar').evaluate("node=>getComputedStyle(node).backgroundImage")
     visibility=page.evaluate("""Object.fromEntries([2021,2022,2023,2024,2025].map(year=>[year,mochoSnowMap.getLayoutProperty(`gpr-${year}`,'visibility')]))""")
     assert visibility=={'2021':'none','2022':'none','2023':'none','2024':'none','2025':'visible'},visibility
@@ -323,4 +326,4 @@ with sync_playwright() as pw:
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','minimal glacier and ice-cap popups','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-18 m','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))

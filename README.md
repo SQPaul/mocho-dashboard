@@ -19,7 +19,7 @@ Web estática sin compilación ni claves API. Incluye relieve 3D/2D, cuatro esta
 - Cumbres Mocho y Choshuenco: `cumbres.shp`, reproyectado desde UTM 18S a WGS84.
 - Balizas: la interfaz publica únicamente sus coordenadas WGS84; B15 tiene prioridad interactiva sobre EMAM-Mocho cuando ambas capas están visibles.
 - Relieve de contexto: [Mapterhorn](https://mapterhorn.com/attribution/), con exageración vertical 1×. Es independiente de los DEM científicos del proyecto.
-- Manto nival: GeoTIFF GPR del 08/10/2021, 14/10/2022, 17/10/2023, 19/10/2024 y 19/10/2025. Los raster se publican con la paleta Blues y una escala común de 0–18 m; la tabla conserva literalmente el resumen proporcionado para cada campaña.
+- Manto nival: GeoTIFF GPR del 08/10/2021, 14/10/2022, 17/10/2023, 19/10/2024 y 19/10/2025. Los raster se publican con la paleta Blues y una escala común de 0–17 m; la tabla conserva literalmente el resumen proporcionado para cada campaña.
 
 Se conservan las cifras publicadas en el informe. La geometría archivada tiene pequeñas diferencias respecto de sus atributos de superficie; no se sustituyen los valores del informe por cálculos del mapa. Los datos originales no se modifican.
 
@@ -35,7 +35,7 @@ Regeneración: `python scripts/prepare_data.py --source RUTA/AnexosDigitales`. E
 
 Figura 2 y balizas: `python scripts/prepare_history_stakes.py`; la serie usa por defecto `data/bm_hist.xlsx` e incluye 2025–2026. Capítulo 2: `python scripts/prepare_variations.py` (añade openpyxl; rutas del archivo local definidas al inicio). El entorno `C:\Users\pauls\anaconda3\envs\geopy\python.exe` dispone de estas dependencias.
 
-Capítulo 3: `python scripts/prepare_gpr.py`. Lee `data/GPR/GPR_DDMMYYYY.tif`, aplica Blues 0–18 m y genera únicamente los WebP y el manifiesto necesarios para la web. Requiere Rasterio, pyproj, NumPy, Pillow y Matplotlib.
+Capítulo 3: `python scripts/prepare_gpr.py`. Lee `data/GPR/GPR_DDMMYYYY.tif`, aplica Blues 0–17 m y genera únicamente los WebP y el manifiesto necesarios para la web. Requiere Rasterio, pyproj, NumPy, Pillow y Matplotlib.
 
 ## Publicación y verificación
 
@@ -47,4 +47,4 @@ Entorno de pruebas: Python de `geopy`, Microsoft Edge y Playwright 1.62 instalad
 
 MapLibre GL JS 6.8.0 se distribuye en `vendor/`, con su licencia BSD-3-Clause. Las licencias de las bibliotecas no se aplican automáticamente a los datos del proyecto. Tipografías DM Sans y Manrope mediante Google Fonts, con alternativas del sistema.
 
-Diseño y desarrollo: [Paul Sandoval-Quilodrán](https://github.com/SQPaul). Desarrollo del informe: GlacioUACh.
+Diseño y desarrollo: Paul Sandoval-Quilodrán. Desarrollo del informe: GlacioUACh.

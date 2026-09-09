@@ -13,7 +13,7 @@ from pyproj import Transformer
 
 ROOT = Path(__file__).resolve().parents[1]
 COLOR_MIN = 0.0
-COLOR_MAX = 18.0
+COLOR_MAX = 17.0
 SUMMARY = [
     {'label': 'Oct 2021', 'n': 14295, 'distanceKm': 7.30, 'meanM': 5.02, 'stdM': 0.73, 'minM': 3.08, 'maxM': 7.18},
     {'label': 'Oct 2022', 'n': 4176, 'distanceKm': 7.54, 'meanM': 7.34, 'stdM': 1.85, 'minM': 4.10, 'maxM': 13.89},
@@ -72,7 +72,7 @@ def prepare(source_dir, output_dir):
     manifest = {
         'unit': 'm',
         'palette': 'Blues',
-        'colorScale': {'min': COLOR_MIN, 'max': COLOR_MAX, 'ticks': [0, 3, 6, 9, 12, 15, 18], 'stops': stops},
+        'colorScale': {'min': COLOR_MIN, 'max': COLOR_MAX, 'ticks': [0, 3, 6, 9, 12, 15, 17], 'stops': stops},
         'defaultYear': 2025,
         'campaigns': campaigns,
         'summary': SUMMARY,

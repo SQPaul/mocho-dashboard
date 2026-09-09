@@ -1,6 +1,6 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Estado final: los tres capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–18 m y una tabla web exacta. La interfaz muestra títulos sin números de figura y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Estado final: los tres capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–17 m y una tabla web exacta. La interfaz muestra títulos sin números de figura, no enlaza a GitHub y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
@@ -129,7 +129,7 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 4. Comprobar navegación: siguiente/anterior, URL directa a los capítulos 2 y 3, recarga, Atrás/Adelante, foco y regreso a cada mapa sin quedar en blanco.
 5. Comprobar la serie histórica: 17 y 12 observaciones, extremos documentados, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
 6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.
-7. Comprobar capítulo 3: cinco campañas exclusivas, escala Blues 0–18 m, tabla de cinco filas, relieve 3D/2D y fallos aislados de manifiesto o raster.
+7. Comprobar capítulo 3: cinco campañas exclusivas, escala Blues 0–17 m, tabla de cinco filas, relieve 3D/2D y fallos aislados de manifiesto o raster.
 8. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico o tabla sí es aceptable.
 9. Probar fallos de carga de JSON, imágenes y relieve externo. Un fallo en un capítulo no debe impedir abrir los demás.
 10. Usar la habilidad de navegador si está disponible; el proyecto dispone de su comprobador local como alternativa.
