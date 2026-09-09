@@ -1,4 +1,5 @@
 import {createTerrainMap,bindMapControls,showPopup,reduced} from './map-common.js';
+import {initSnowChapter,getSnowMap} from './snow.js';
 const el = s => document.querySelector(s);
 const svgNS = 'http://www.w3.org/2000/svg';
 const fmt = n => n.toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:3});
@@ -95,11 +96,18 @@ function setupVariationChart() {
 }
 async function json(url){const r=await fetch(url);if(!r.ok)throw new Error(url);return r.json();}
 function chapter(n,push=true){
-  const two=n===2,page=el('#chapter-two'),first=el('.workspace');
-  document.body.classList.toggle('chapter-two',two);page.hidden=!two;first.hidden=two;first.inert=two;page.inert=!two;
-  el('#chapter-label').innerHTML=two?'<span>02</span> Variaciones de glaciares':'<span>01</span> Área de estudio';
-  const nav=el('.chapter-nav');nav.textContent=two?'← Área de estudio':'Variaciones →';nav.dataset.goChapter=two?'1':'2';nav.href=two?'#capitulo-1':'#capitulo-2';
-  document.title=two?'Mocho · Variaciones de glaciares':'Mocho · Atlas del glaciar';
+  if(![1,2,3].includes(n))n=1;
+  const two=n===2,three=n===3,first=el('.workspace'),second=el('#chapter-two'),third=el('#chapter-three');
+  document.body.classList.toggle('chapter-two',two);document.body.classList.toggle('chapter-three',three);
+  first.hidden=n!==1;second.hidden=!two;third.hidden=!three;first.inert=n!==1;second.inert=!two;third.inert=!three;
+  const settings={
+    1:{label:'<span>01</span> Área de estudio',nav:'Variaciones →',go:2,title:'Mocho · Atlas del glaciar'},
+    2:{label:'<span>02</span> Variaciones de glaciares',nav:'Manto nival →',go:3,title:'Mocho · Variaciones de glaciares'},
+    3:{label:'<span>03</span> Caracterización del manto nival',nav:'← Variaciones',go:2,title:'Mocho · Caracterización del manto nival'}
+  }[n];
+  el('#chapter-label').innerHTML=settings.label;
+  const nav=el('.chapter-nav');nav.textContent=settings.nav;nav.dataset.goChapter=settings.go;nav.href=`#capitulo-${settings.go}`;
+  document.title=settings.title;
   if(push&&location.hash!==`#capitulo-${n}`)history.pushState(null,'',`#capitulo-${n}`);
   if(two&&!chapterLoading){
     chapterLoading=Promise.allSettled([json('./data/glacier-variations.json'),json('./data/icecap-history.geojson')]).then(([seriesResult,geometryResult])=>{
@@ -109,9 +117,10 @@ function chapter(n,push=true){
       else el('#variation-map-message').textContent='No fue posible cargar los datos del mapa. Recarga la página para reintentar.';
     });
   }
-  const target=two?page:first,title=target.querySelector(two?'h1':'h1');title.tabIndex=-1;title.focus({preventScroll:true});
-  if(push&&!reduced)target.animate([{transform:`translateX(${two?24:-24}px)`,opacity:.5},{transform:'translateX(0)',opacity:1}],{duration:220});
-  window.scrollTo(0,0);requestAnimationFrame(()=>{(two?variationMap:window.mochoMap)?.resize();});
+  if(three)initSnowChapter();
+  const target=three?third:two?second:first,title=target.querySelector('h1');title.tabIndex=-1;title.focus({preventScroll:true});
+  if(push&&!reduced)target.animate([{transform:`translateX(${n===1?-24:24}px)`,opacity:.5},{transform:'translateX(0)',opacity:1}],{duration:220});
+  window.scrollTo(0,0);requestAnimationFrame(()=>{(three?getSnowMap():two?variationMap:window.mochoMap)?.resize();});
 }
-function syncChapter(){chapter(location.hash==='#capitulo-2'?2:1,false);}
+function syncChapter(){const match=location.hash.match(/^#capitulo-([123])$/);chapter(match?+match[1]:1,false);}
 window.addEventListener('hashchange',syncChapter);window.addEventListener('popstate',syncChapter);document.querySelectorAll('[data-go-chapter]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();chapter(+a.dataset.goChapter);}));syncChapter();

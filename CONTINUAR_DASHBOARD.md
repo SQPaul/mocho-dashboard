@@ -1,16 +1,13 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Estado final: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la serie de superficie conserva sus dos paneles, sin tabla ni descarga CSV. La interfaz muestra títulos sin números de figura y omite notas metodológicas desplegables. Los mapas de ambos capítulos comienzan en 3D. La suite local completa pasó el 09/09/2026. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Estado final: los tres capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–18 m y una tabla web exacta. La interfaz muestra títulos sin números de figura y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
 1. Trabajar en `C:\Users\pauls\mocho-dashboard`.
 2. Leer `PROJECT_CONTEXT.md`, `README.md` y este archivo; ejecutar `git status --short`.
-3. Conservar las modificaciones existentes: son un avance incompleto, todavía sin validación ni publicación. No reiniciar ni sobrescribir el repositorio.
-4. Completar estos objetivos, en orden:
-   - Capítulo 1: Figura 2 interactiva debajo del mapa y balizas GNSS en el mapa.
-   - Navegación entre hojas: avanzar hacia la derecha al capítulo 2 y volver hacia la izquierda al capítulo 1.
-   - Capítulo 2, **«Variaciones de glaciares»**: Figura 7 como mapa interactivo y Figura 4 como gráficos interactivos.
+3. Conservar las modificaciones existentes; los capítulos publicados son trabajo validado. No reiniciar ni sobrescribir el repositorio.
+4. Los capítulos 1, 2 y 3 están terminados. Continuar solo a partir de una solicitud nueva del usuario.
 5. Mantener fondo marfil, verdes apagados, tipografía editorial, firma de Paul Sandoval-Quilodrán y crédito GlacioUACh. Conservar la aplicación estática, sin compilación ni claves API, compatible con GitHub Pages.
 
 ## 2. Usar las fuentes ya identificadas
@@ -127,16 +124,16 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 ## 8. Verificar antes de dar el trabajo por terminado
 
 1. Servir el sitio: `python -m http.server 8000 --bind 127.0.0.1`. Comprobar antes si el puerto ya está ocupado: podría seguir activo el servidor de la sesión anterior.
-2. Ejecutar `scripts/check_dashboard.py`, que usa Playwright/Edge. La versión final del balance histórico, las balizas y el capítulo 2 pasa esta suite completa.
+2. Ejecutar `scripts/check_dashboard.py`, que usa Playwright/Edge y cubre los tres capítulos.
 3. Comprobar capítulo 1: mapa 3D/2D, capas, cuatro estaciones, dos cumbres, diez balizas, fichas, prioridad B15/EMAM-Mocho, gráfico, filtros, teclado e incertidumbre, sin tabla ni CSV en la Figura 2.
-4. Comprobar navegación: siguiente/anterior, URL directa a capítulo 2, recarga, Atrás/Adelante, foco y regreso al mapa sin quedar en blanco. Confirmar que no se acumulan mapas ni manejadores al alternar varias veces.
+4. Comprobar navegación: siguiente/anterior, URL directa a los capítulos 2 y 3, recarga, Atrás/Adelante, foco y regreso a cada mapa sin quedar en blanco.
 5. Comprobar la serie histórica: 17 y 12 observaciones, extremos documentados, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
 6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.
-7. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico sí es aceptable.
-8. Probar fallos de carga de un JSON, de imagen y del relieve externo. Un fallo en un capítulo no debe impedir abrir el otro; mostrar un mensaje útil para el componente afectado.
-9. Usar la habilidad de navegador si está disponible. En la sesión de preparación, el navegador integrado devolvió una lista vacía; el proyecto dispone de su comprobador local como alternativa.
-10. Actualizar `README.md` y `PROJECT_CONTEXT.md` con el estado final, fuentes, navegación, comandos de regeneración y cualquier dato aún pendiente. No marcar como terminada una Figura 7 incompleta.
-11. Revisar `git diff` y publicar mediante el flujo de commit/push a `main` indicado en `PROJECT_CONTEXT.md`, una vez completadas las pruebas. Verificar después `https://sqpaul.github.io/mocho-dashboard/`, incluyendo acceso directo con `#capitulo-2`.
+7. Comprobar capítulo 3: cinco campañas exclusivas, escala Blues 0–18 m, tabla de cinco filas, relieve 3D/2D y fallos aislados de manifiesto o raster.
+8. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico o tabla sí es aceptable.
+9. Probar fallos de carga de JSON, imágenes y relieve externo. Un fallo en un capítulo no debe impedir abrir los demás.
+10. Usar la habilidad de navegador si está disponible; el proyecto dispone de su comprobador local como alternativa.
+11. Actualizar `README.md` y `PROJECT_CONTEXT.md`, revisar `git diff`, publicar un único commit en `main` y verificar `https://sqpaul.github.io/mocho-dashboard/`.
 
 ## 9. Evitar trabajo innecesario y problemas del entorno
 
@@ -150,4 +147,4 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 
 ## Mensaje para entregar al siguiente modelo
 
-> Lee `CONTINUAR_DASHBOARD.md`, `PROJECT_CONTEXT.md` y `README.md`. Continúa desde las modificaciones existentes, sin descartarlas. Termina la Figura 2 interactiva y las balizas del capítulo 1; implementa navegación de hoja hacia la derecha al capítulo 2 «Variaciones de glaciares», con Figura 7 como mapa interactivo y Figura 4 como dos gráficos interactivos. Sigue los pasos, usa las fuentes verificadas, comprueba el resultado y documenta cualquier contorno histórico que no pueda localizarse.
+> Lee `CONTINUAR_DASHBOARD.md`, `PROJECT_CONTEXT.md` y `README.md`. Los capítulos 1, 2 y 3 están completos; conserva las implementaciones y fuentes verificadas. Continúa únicamente desde una nueva solicitud del usuario, prueba el resultado y publica solo derivados web necesarios.

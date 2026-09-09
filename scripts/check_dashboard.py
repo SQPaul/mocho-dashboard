@@ -100,8 +100,8 @@ with sync_playwright() as pw:
     assert page.evaluate('mochoVariationMap.getPitch()') > 40
     assert page.locator('#variation-map canvas').is_visible()
     assert page.locator('#variation-map .contour-svg').count()==0
-    assert page.locator('.variation-map-card .eyebrow').inner_text()=='DELIMITACIONES SOBRE EL RELIEVE'
-    assert page.locator('.variation-chart-card .eyebrow').inner_text()=='SERIE HISTÓRICA'
+    assert page.locator('#chapter-two .variation-map-card .eyebrow').inner_text()=='DELIMITACIONES SOBRE EL RELIEVE'
+    assert page.locator('#chapter-two .variation-chart-card .eyebrow').inner_text()=='SERIE HISTÓRICA'
     assert page.locator('.variation-source').count()==0
     assert page.locator('#variation-table').count()==0
     assert page.locator('#contour-controls input:not(:disabled)').count()==12
@@ -138,8 +138,50 @@ with sync_playwright() as pw:
     page.keyboard.press('ArrowRight')
     assert '1986' in page.locator('#variation-readout-title').inner_text()
     assert not page.locator('#chart-show-contour').is_disabled()
-    page.locator('.variation-map-card').screenshot(path=str(out/'variations-3d.png'))
-    page.locator('.variation-chart-card').screenshot(path=str(out/'variations-chart.png'))
+    page.locator('#chapter-two .variation-map-card').screenshot(path=str(out/'variations-3d.png'))
+    page.locator('#chapter-two .variation-chart-card').screenshot(path=str(out/'variations-chart.png'))
+    # Chapter 3: one GPR campaign at a time over the shared 3D terrain.
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoSnowReady === true',timeout=45000)
+    page.wait_for_function('mochoSnowMap.isStyleLoaded()')
+    page.wait_for_timeout(1200)
+    assert page.locator('body.chapter-three').count()==1
+    assert page.locator('#chapter-label').inner_text()=='03 Caracterización del manto nival'
+    assert page.locator('#snow-title').inner_text()=='Midiendo lo invisible,\nla nieve bajo nuestros pies'
+    assert page.locator('#chapter-three').is_visible() and page.locator('#chapter-two').is_hidden()
+    assert page.evaluate('mochoSnowMap.getTerrain()') is not None
+    assert page.evaluate('mochoSnowMap.getPitch()')>40
+    assert page.locator('#snow-map canvas').is_visible()
+    assert page.locator('#snow-campaign-controls input').count()==5
+    assert page.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2025',exact=True).is_checked()
+    snow_manifest=page.evaluate("fetch('./data/gpr-campaigns.json').then(r=>r.json())")
+    assert [row['year'] for row in snow_manifest['campaigns']]==[2021,2022,2023,2024,2025],snow_manifest
+    assert snow_manifest['colorScale']['min']==0 and snow_manifest['colorScale']['max']==18,snow_manifest
+    assert snow_manifest['colorScale']['ticks']==[0,3,6,9,12,15,18],snow_manifest
+    assert all(len(row['imageCoordinates'])==4 for row in snow_manifest['campaigns']),snow_manifest
+    assert page.locator('#snow-scale-ticks').inner_text().split()==['0','3','6','9','12','15','18']
+    assert 'linear-gradient' in page.locator('#snow-colorbar').evaluate("node=>getComputedStyle(node).backgroundImage")
+    visibility=page.evaluate("""Object.fromEntries([2021,2022,2023,2024,2025].map(year=>[year,mochoSnowMap.getLayoutProperty(`gpr-${year}`,'visibility')]))""")
+    assert visibility=={'2021':'none','2022':'none','2023':'none','2024':'none','2025':'visible'},visibility
+    page.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2024',exact=True).check()
+    assert page.evaluate("mochoSnowMap.getLayoutProperty('gpr-2024','visibility')")=='visible'
+    assert page.evaluate("mochoSnowMap.getLayoutProperty('gpr-2025','visibility')")=='none'
+    assert '19 OCT 2024' in page.locator('#snow-selection').inner_text()
+    assert page.locator('#snow-table-body tr').count()==5
+    table_rows=page.locator('#snow-table-body tr').all_inner_texts()
+    assert table_rows[0].split()==['Oct','2021','14.295','7,30','5,02','0,73','3,08','7,18'],table_rows
+    assert table_rows[-1].split()==['Oct','2025','19.467','9,90','5,05','0,89','3,14','8,77'],table_rows
+    page.locator('#snow-view-2d').click()
+    page.wait_for_function('mochoSnowMap.getPitch()<1')
+    assert page.evaluate('mochoSnowMap.getTerrain()') is None
+    page.locator('#snow-view-3d').click()
+    page.wait_for_function('mochoSnowMap.getPitch()>50')
+    page.locator('#chapter-three .variation-map-card').screenshot(path=str(out/'snow-3d.png'))
+    page.locator('#chapter-three .snow-table-card').screenshot(path=str(out/'snow-table.png'))
+    page.screenshot(path=str(out/'snow-desktop.png'),full_page=True)
+    page.locator('#chapter-three .back-link').click()
+    page.wait_for_function("document.body.classList.contains('chapter-two')")
+    assert page.locator('#variation-map canvas').is_visible()
     page.locator('#chapter-two .back-link').click()
     page.wait_for_function("!document.body.classList.contains('chapter-two')")
     assert page.locator('#map').is_visible()
@@ -212,7 +254,14 @@ with sync_playwright() as pw:
     page.wait_for_timeout(600)
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 2 mobile overflow'
     assert page.locator('#variation-map').bounding_box()['height']>=390
-    page.locator('.variation-map-card').screenshot(path=str(out/'variations-mobile.png'))
+    page.locator('#chapter-two .variation-map-card').screenshot(path=str(out/'variations-mobile.png'))
+    page.locator('.chapter-nav').click()
+    page.wait_for_function('window.mochoSnowReady === true',timeout=30000)
+    page.wait_for_timeout(600)
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Chapter 3 mobile overflow'
+    assert page.locator('#snow-map').bounding_box()['height']>=390
+    page.locator('#chapter-three .variation-map-card').screenshot(path=str(out/'snow-mobile.png'))
+    page.locator('#chapter-three .back-link').click()
     page.locator('#chapter-two .back-link').click()
     assert not errors, errors
     fallback=browser.new_page(viewport={'width':900,'height':750})
@@ -226,6 +275,11 @@ with sync_playwright() as pw:
     assert fallback.locator('#variation-view-3d').is_disabled()
     assert fallback.evaluate('mochoVariationMap.getTerrain()') is None
     fallback.wait_for_function('mochoVariationMap.isStyleLoaded()')
+    fallback.locator('.chapter-nav').click()
+    fallback.wait_for_function('window.mochoSnowReady === true',timeout=30000)
+    assert fallback.locator('#snow-view-3d').is_disabled()
+    assert fallback.evaluate('mochoSnowMap.getTerrain()') is None
+    fallback.wait_for_function('mochoSnowMap.isStyleLoaded()')
     # Failed chapter 2 assets must report their failure and preserve chapter 1.
     for asset,selector,expected in [
         ('icecap-history.geojson','#variation-map-message','datos del mapa'),
@@ -244,9 +298,29 @@ with sync_playwright() as pw:
         broken.wait_for_function('window.mochoReady===true')
         assert broken.locator('#map canvas').is_visible()
         broken.close()
+    # Failed GPR assets must remain isolated to chapter 3.
+    broken=browser.new_page()
+    broken.on('pageerror',lambda e:errors.append(str(e)))
+    broken.route('**/data/gpr-campaigns.json',lambda route:route.abort())
+    broken.goto(url+'#capitulo-3',wait_until='networkidle')
+    broken.wait_for_function("document.querySelector('#snow-map-message').textContent.includes('campañas GPR')")
+    assert 'resumen GPR' in broken.locator('#snow-table-loading').inner_text()
+    broken.locator('#chapter-three .back-link').click()
+    broken.wait_for_function('window.mochoVariationReady===true')
+    assert broken.locator('#variation-map canvas').is_visible()
+    broken.close()
+    broken=browser.new_page()
+    broken.on('pageerror',lambda e:errors.append(str(e)))
+    broken.route('**/data/gpr-2025.webp',lambda route:route.abort())
+    broken.goto(url+'#capitulo-3',wait_until='networkidle')
+    broken.wait_for_function("document.querySelector('#snow-map-message').textContent.includes('GPR 2025')")
+    assert broken.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2025',exact=True).is_disabled()
+    broken.get_by_role('radio',name='Mostrar campaña GPR 19 OCT 2024',exact=True).check()
+    assert broken.evaluate("mochoSnowMap.getLayoutProperty('gpr-2024','visibility')")=='visible'
+    broken.close()
     assert not errors, errors
     fallback.wait_for_timeout(500)
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','minimal glacier and ice-cap popups','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','minimal glacier and ice-cap popups','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-18 m','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))
