@@ -173,7 +173,7 @@
     }
   ],
   "provenance": {
-    "path": "3_Cinemática_glaciar/3_gps/nov2025/balizas_mocho20251121.geojson",
+    "path": "3_Cinemática_glaciar/3_GPS/Nov2025/Balizas_Mocho20251121.geojson",
     "outputCrs": "EPSG:4326",
     "coordinates": "Campos Longitude/Latitude WGS84 del levantamiento; geometría original UTM 18S.",
     "note": "Fechas tomadas de Averaging start. Alturas elipsoidales excluidas; no son elevaciones sobre el nivel del mar."

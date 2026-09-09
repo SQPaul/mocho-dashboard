@@ -1,6 +1,6 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles, tabla y CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles y tabla, sin descarga CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
@@ -43,13 +43,13 @@ Datos del capítulo 2: `1_DASHBOARD\AnexosDigitales\2_Variaciones_de_glaciares`.
 ### Figura 2
 
 1. Revisar y completar `history.js`, `history.css` y la sección añadida a `index.html`. La primera versión ya está escrita: no hace falta reconstruirla.
-2. Usar `data/mass-balance-history.json`: 22 años hidrológicos, de 2003–2004 a 2024–2025, con 17 balances disponibles y 5 ausentes.
-3. Mantener las barras de ganancias/pérdidas, consulta por cursor/toque/teclado, selectores desde/hasta, reinicio, incertidumbre opcional, tabla y descarga CSV de la selección.
+2. Usar `data/mass-balance-history.json`: 23 años hidrológicos, de 2003–2004 a 2025–2026, con 18 balances disponibles y 5 ausentes.
+3. Mantener las barras de ganancias/pérdidas, consulta por cursor/toque/teclado, selectores desde/hasta, reinicio e incertidumbre opcional, sin tabla ni descarga CSV.
 4. Mantener los años ausentes como `null`, nunca cero: 2006–2007, 2007–2008, 2008–2009, 2013–2014 y 2014–2015.
-5. Comprobar valores de referencia: −0,88 en 2003–2004; +0,36 en 2004–2005; +0,69 en 2009–2010; −2,67 en 2022–2023; +0,88 en 2024–2025. Unidad: m eq.a.
+5. Comprobar valores de referencia: −0,88 en 2003–2004; +0,36 en 2004–2005; +0,69 en 2009–2010; −2,67 en 2022–2023; +0,88 en 2024–2025; −3,38 en 2025–2026. Unidad: m eq.a.
 6. La Figura 2 debe quedar inmediatamente debajo del mapa, también en móvil. Revisar que su número de figura «02» no se confunda con el capítulo 2.
 
-Fuente exacta: `Documentos\bm_hist\bm_hist.xlsx`, hoja `Hoja1`. Se identificó mediante `Codes\Figures_glaciares_chilenos.ipynb`, que genera la figura. El script local `scripts/prepare_history_stakes.py` ya extrae esta serie y las balizas.
+Fuente exacta activa: `data\bm_hist.xlsx`, hoja `Hoja1`. El script local `scripts/prepare_history_stakes.py` extrae esta serie y las balizas.
 
 ### Balizas
 
@@ -59,7 +59,7 @@ Fuente exacta: `Documentos\bm_hist\bm_hist.xlsx`, hoja `Hoja1`. Se identificó m
 4. Las fechas reales de medición son 22–23/11/2025, tomadas de `Averaging start`; no deducirlas del nombre del archivo. Los derivados usan los campos WGS84 `Longitude`/`Latitude`.
 5. Corregir el texto dañado de `index.html`: `10 puntos ? 22?23 NOV 2025` debe decir `10 puntos · 22–23 NOV 2025`.
 6. Corregir/verificar el anclaje del marcador: actualmente usa `anchor:'left'` sobre un botón con relleno. El centro del punto visible debe coincidir con la coordenada, no el borde del botón. Comprobarlo en 2D y 3D.
-7. Resolver la superposición B15/AWS-Mocho manteniendo ambas referencias accesibles y sin desplazar artificialmente las coordenadas. La ficha B15 debe explicar que representa el sector de la estación, no su ubicación exacta.
+7. Resolver la superposición B15/EMAM-Mocho sin desplazar las coordenadas: B15 tiene prioridad mientras las balizas están visibles; EMAM-Mocho queda accesible al ocultarlas.
 8. No presentar alturas elipsoidales GNSS como elevaciones sobre el nivel del mar. El derivado actual las excluye.
 
 ## 4. Incorporar el cambio de hoja hacia la derecha
@@ -110,7 +110,7 @@ Fuente exacta: `Documentos\bm_hist\bm_hist.xlsx`, hoja `Hoja1`. Se identificó m
 2. Usar líneas, puntos y banda de incertidumbre, conservando los años de observación de cada serie. El eje horizontal debe ser temporal: respetar las distancias entre años.
 3. Mantener ejes verticales propios para cada panel; no combinar las dos superficies en una única serie ni normalizarlas por defecto.
 4. Permitir consulta con cursor, toque y teclado. Mostrar año, área ± error y tasa del intervalo precedente, cuando exista.
-5. Añadir selección de intervalo compartida, activar/desactivar incertidumbre, restablecer, tabla y descarga CSV. Reutilizar patrones de `history.js`, con un módulo separado para estas series.
+5. Añadir selección de intervalo compartida, activar/desactivar incertidumbre, restablecer y tabla, sin descarga CSV. Reutilizar patrones de `history.js`, con un módulo separado para estas series.
 6. Consultar solo observaciones reales. Las líneas unen observaciones, pero no crean mediciones anuales intermedias. No rellenar los años que faltan con ceros.
 7. En el panel de capa de hielo, ofrecer «Ver contorno en el mapa» para el año consultado, habilitado únicamente si existe su geometría. Esta acción activa el contorno y desplaza la vista al mapa; no oculta otras comparaciones seleccionadas.
 8. Mostrar fuentes: Figura 4, p. 19; Excel del anexo 2; tablas 39 y 40 del Anexo B del informe. No confundir unidades de superficie (km²) con las de balance de masa del capítulo 1 (m eq.a.).
@@ -128,7 +128,7 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 
 1. Servir el sitio: `python -m http.server 8000 --bind 127.0.0.1`. Comprobar antes si el puerto ya está ocupado: podría seguir activo el servidor de la sesión anterior.
 2. Ejecutar y ampliar `scripts/check_dashboard.py`, que usa Playwright/Edge. La primera versión de Figura 2 y balizas todavía no ha pasado este script.
-3. Comprobar capítulo 1: mapa 3D/2D, capas, diez balizas, fichas, ocultación de balizas, B15/AWS, gráfico, filtros, teclado, incertidumbre, tabla y CSV. Para probar la ficha AWS preexistente, ocultar la capa de balizas y verificar B15 por separado cuando esté visible.
+3. Comprobar capítulo 1: mapa 3D/2D, capas, cuatro estaciones, dos cumbres, diez balizas, fichas, prioridad B15/EMAM-Mocho, gráfico, filtros, teclado e incertidumbre, sin tabla ni CSV en la Figura 2.
 4. Comprobar navegación: siguiente/anterior, URL directa a capítulo 2, recarga, Atrás/Adelante, foco y regreso al mapa sin quedar en blanco. Confirmar que no se acumulan mapas ni manejadores al alternar varias veces.
 5. Comprobar Figura 4: 17 y 12 observaciones, extremos de la tabla anterior, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
 6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.

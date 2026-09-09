@@ -9,7 +9,7 @@
       "balance": -0.88,
       "uncertainty": 0.18,
       "sourceLabel": "Rivera, 2005",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2004,
@@ -17,7 +17,7 @@
       "balance": 0.36,
       "uncertainty": 0.07,
       "sourceLabel": "Bown, 2007",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2005,
@@ -25,7 +25,7 @@
       "balance": -0.68,
       "uncertainty": null,
       "sourceLabel": "JLR",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2006,
@@ -33,7 +33,7 @@
       "balance": null,
       "uncertainty": null,
       "sourceLabel": null,
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2007,
@@ -41,7 +41,7 @@
       "balance": null,
       "uncertainty": null,
       "sourceLabel": null,
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2008,
@@ -49,7 +49,7 @@
       "balance": null,
       "uncertainty": null,
       "sourceLabel": "JLR",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2009,
@@ -57,7 +57,7 @@
       "balance": 0.69,
       "uncertainty": 0.1,
       "sourceLabel": "Schaefer, 2017",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2010,
@@ -65,7 +65,7 @@
       "balance": -0.37,
       "uncertainty": 0.11,
       "sourceLabel": "Schaefer, 2017",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2011,
@@ -73,7 +73,7 @@
       "balance": -2.14,
       "uncertainty": 0.14,
       "sourceLabel": "Schaefer, 2017",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2012,
@@ -81,7 +81,7 @@
       "balance": -1.79,
       "uncertainty": 0.11,
       "sourceLabel": "Schaefer, 2017",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2013,
@@ -89,7 +89,7 @@
       "balance": null,
       "uncertainty": null,
       "sourceLabel": null,
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2014,
@@ -97,7 +97,7 @@
       "balance": null,
       "uncertainty": null,
       "sourceLabel": null,
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2015,
@@ -105,7 +105,7 @@
       "balance": -1.32,
       "uncertainty": null,
       "sourceLabel": "WGMS",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2016,
@@ -113,7 +113,7 @@
       "balance": -2.47,
       "uncertainty": null,
       "sourceLabel": "WGMS",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2017,
@@ -121,7 +121,7 @@
       "balance": -0.27,
       "uncertainty": null,
       "sourceLabel": "WGMS",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2018,
@@ -129,7 +129,7 @@
       "balance": -0.89,
       "uncertainty": null,
       "sourceLabel": "WGMS",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2019,
@@ -137,7 +137,7 @@
       "balance": -0.8,
       "uncertainty": null,
       "sourceLabel": "WGMS",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2020,
@@ -145,7 +145,7 @@
       "balance": -1.62,
       "uncertainty": 0.31,
       "sourceLabel": "DGA, Marius",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2021,
@@ -153,7 +153,7 @@
       "balance": -2.56,
       "uncertainty": 0.24,
       "sourceLabel": "DGA",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2022,
@@ -161,7 +161,7 @@
       "balance": -2.67,
       "uncertainty": 0.3,
       "sourceLabel": "DGA",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2023,
@@ -169,17 +169,25 @@
       "balance": -0.17,
       "uncertainty": 0.06,
       "sourceLabel": "DGA",
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     },
     {
       "year": 2024,
       "period": "2024-2025",
       "balance": 0.88,
       "uncertainty": 0.06,
-      "sourceLabel": null,
-      "provenance": "Documentos/bm_hist/bm_hist.xlsx · Hoja1"
+      "sourceLabel": "DGA",
+      "provenance": "data/bm_hist.xlsx · Hoja1"
+    },
+    {
+      "year": 2025,
+      "period": "2025-2026",
+      "balance": -3.38,
+      "uncertainty": 0.14,
+      "sourceLabel": "DGA",
+      "provenance": "data/bm_hist.xlsx · Hoja1"
     }
   ],
-  "source": "Informe final — Mocho 2025–2026, Figura 2, p. 5; libro original bm_hist.xlsx, identificado en Codes/Figures_glaciares_chilenos.ipynb.",
+  "source": "Informe final — Mocho 2025–2026, Figura 2, p. 5; libro actualizado data/bm_hist.xlsx, Hoja1.",
   "note": "Los años sin balance anual son null; no equivalen a cero. Incertidumbres según columna incer, sin asignar un nivel de confianza no documentado."
 }

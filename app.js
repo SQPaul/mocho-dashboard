@@ -1,13 +1,15 @@
 import {createTerrainMap,bindMapControls,showPopup} from './map-common.js';
 const $=s=>document.querySelector(s),message=$('#map-message');
 let map;
-const groups={glacier:['glacier-fill','glacier-line'],icecap:['icecap-fill','icecap-line'],points:['point-halo','point-dot']};
+const groups={glacier:['glacier-fill','glacier-line'],icecap:['icecap-fill','icecap-line'],stations:['station-halo','station-dot'],summits:['summit-symbol']};
 const dialog=$('#sources-dialog');
 $('#open-sources').onclick=()=>dialog.showModal();$('#close-sources').onclick=()=>dialog.close();
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 function notice(text){message.textContent=text;message.classList.add('notice');message.classList.remove('hidden');}
 function fallback(error){console.error('No se pudo iniciar el mapa:',error);$('#fallback').classList.remove('hidden');message.classList.add('hidden');}
 const popup=(p,c)=>showPopup(map,p,c);
+const coordinatePopup=(feature,category)=>popup({name:feature.properties.name,category,
+  description:`Latitud ${feature.properties.lat}° · Longitud ${feature.properties.lon}°`},feature.geometry.coordinates.slice(0,2));
 async function addStakes(){
   const response=await fetch('./data/stakes.geojson');if(!response.ok)throw new Error('Balizas no disponibles');
   const data=await response.json();map.addSource('stakes',{type:'geojson',data});
@@ -34,16 +36,24 @@ async function init(){
   const timer=setTimeout(()=>notice('El mapa está tardando en cargar. Comprueba tu conexión.'),15000);
   map.on('load',()=>{
     clearTimeout(timer);if(!controls.terrainFailed)message.classList.add('hidden');
-    for(const name of ['glacier','icecap','points'])map.addSource(name,{type:'geojson',data:data[name]});
+    for(const name of ['glacier','icecap','stations','summits'])map.addSource(name,{type:'geojson',data:data[name]});
     map.addLayer({id:'icecap-fill',type:'fill',source:'icecap',paint:{'fill-color':'#eff0c6','fill-opacity':.05}});
     map.addLayer({id:'icecap-line',type:'line',source:'icecap',paint:{'line-color':'#f5efce','line-width':1.2,'line-opacity':.85,'line-dasharray':[3,3]}});
     map.addLayer({id:'glacier-fill',type:'fill',source:'glacier',paint:{'fill-color':'#72d5c6','fill-opacity':.17}});
     map.addLayer({id:'glacier-line',type:'line',source:'glacier',paint:{'line-color':'#adffdc','line-width':2.3}});
-    map.addLayer({id:'point-halo',type:'circle',source:'points',paint:{'circle-radius':12,'circle-color':'#eebd7f','circle-opacity':.24}});
-    map.addLayer({id:'point-dot',type:'circle',source:'points',paint:{'circle-radius':5,'circle-color':'#eac18e','circle-stroke-color':'#fff8e6','circle-stroke-width':1.6}});
+    map.addLayer({id:'station-halo',type:'circle',source:'stations',paint:{'circle-radius':12,'circle-color':'#397bb3','circle-opacity':.24}});
+    map.addLayer({id:'station-dot',type:'circle',source:'stations',paint:{'circle-radius':5,'circle-color':'#397bb3','circle-stroke-color':'#fff','circle-stroke-width':1.6}});
+    const summit=document.createElement('canvas');summit.width=36;summit.height=32;
+    const summitContext=summit.getContext('2d');summitContext.beginPath();summitContext.moveTo(18,3);summitContext.lineTo(33,28);summitContext.lineTo(3,28);summitContext.closePath();
+    summitContext.fillStyle='#f3c84b';summitContext.fill();summitContext.strokeStyle='#173b3c';summitContext.lineWidth=4;summitContext.lineJoin='round';summitContext.stroke();
+    map.addImage('summit-triangle',summitContext.getImageData(0,0,36,32),{pixelRatio:2});
+    map.addLayer({id:'summit-symbol',type:'symbol',source:'summits',layout:{'icon-image':'summit-triangle','icon-allow-overlap':true}});
     for(const input of document.querySelectorAll('[data-layer]')){const sync=()=>{for(const layer of groups[input.dataset.layer])map.setLayoutProperty(layer,'visibility',input.checked?'visible':'none');};sync();input.onchange=sync;}
-    const hitLayers=()=>['stake-dot','stake-label','point-dot','point-halo','glacier-fill','icecap-fill'].filter(id=>map.getLayer(id));
-    map.on('click',e=>{const features=map.queryRenderedFeatures(e.point,{layers:hitLayers()});if(!features.length||features.some(f=>f.source==='stakes'))return;const f=features.find(f=>f.source==='points')||features.find(f=>f.source==='glacier')||features[0];popup(f.properties,f.geometry.type==='Point'?f.geometry.coordinates.slice(0,2):e.lngLat);});
+    const hitLayers=()=>['stake-dot','stake-label','station-dot','station-halo','summit-symbol','glacier-fill','icecap-fill'].filter(id=>map.getLayer(id));
+    map.on('click',e=>{const features=map.queryRenderedFeatures(e.point,{layers:hitLayers()});if(!features.length||features.some(f=>f.source==='stakes'))return;
+      const f=features.find(f=>f.source==='stations')||features.find(f=>f.source==='summits')||features.find(f=>f.source==='glacier')||features[0];
+      if(f.source==='stations')coordinatePopup(f);else if(f.source==='summits')coordinatePopup(f,'Cumbre');else popup(f.properties,e.lngLat);
+    });
     map.on('mousemove',e=>{map.getCanvas().style.cursor=map.queryRenderedFeatures(e.point,{layers:hitLayers()}).length?'pointer':'';});
     addStakes().catch(()=>{$('#stakes-status').textContent='No fue posible cargar las balizas. Recarga la página para reintentar.';$('#show-stakes').disabled=true;});window.mochoReady=true;
   });window.mochoMap=map;

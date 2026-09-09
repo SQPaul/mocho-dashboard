@@ -33,12 +33,12 @@ async function initHistory() {
     $('#history-summary').textContent = `${measured.length} balances · ${measured.filter(r => r.balance > 0).length} positivos · ${rows.length - measured.length} sin dato`;
     chart.replaceChildren();
     const w = Math.max(720, rows.length * 39 + 80), h = 370, left = 54, right = w - 20;
-    const y = value => 28 + (1.2 - value) / 4.4 * 258;
+    const y = value => 28 + (1.2 - value) / 4.95 * 258;
     const zero = y(0), step = (right - left) / rows.length;
     chart.setAttribute('viewBox', `0 0 ${w} ${h}`);
     chart.style.minWidth = `${Math.min(w, 820)}px`;
     chart.append(svgNode('title', {}, 'Balance de masa anual del glaciar Mocho'));
-    for (const tick of [1, .5, 0, -.5, -1, -1.5, -2, -2.5, -3]) {
+    for (const tick of [1, .5, 0, -.5, -1, -1.5, -2, -2.5, -3, -3.5]) {
       chart.append(svgNode('line', {x1:left, x2:right, y1:y(tick), y2:y(tick), class:tick === 0 ? 'zero-line' : 'chart-grid'}));
       chart.append(svgNode('text', {x:left-12, y:y(tick)+4, 'text-anchor':'end', class:'chart-tick'}, tick.toLocaleString('es-CL')));
     }
@@ -79,13 +79,6 @@ async function initHistory() {
   end.onchange = () => {if (+end.value < +start.value) start.value = end.value; render();};
   $('#history-uncertainty').onchange = render;
   $('#history-reset').onclick = () => {start.value=records[0].year; end.value=records.at(-1).year; $('#history-uncertainty').checked=false; render();};
-  $('#history-download').onclick = () => {
-    const rows = records.filter(r => r.year >= +start.value && r.year <= +end.value);
-    const csv = 'periodo,balance_m_eq_a,incertidumbre_m_eq_a,fuente\r\n' + rows.map(r => `${r.period},${r.balance ?? ''},${r.uncertainty ?? ''},"Informe Mocho 2025-2026; Figura 2 p.5; bm_hist.xlsx"`).join('\r\n');
-    const url = URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'}));
-    const a = document.createElement('a'); a.href=url; a.download=`mocho-balance-${start.value}-${+end.value+1}.csv`; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
   render(); $('#history-loading').hidden = true; $('#history-content').hidden = false;
 }
 initHistory().catch(() => {$('#history-loading').textContent='No fue posible cargar la serie histórica. Recarga la página para reintentar.';});

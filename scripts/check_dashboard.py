@@ -27,9 +27,25 @@ with sync_playwright() as pw:
     study=page.evaluate("""fetch('./data/study-area.json').then(r=>r.json()).then(d=>({
       imageDate:d.imageDate,
       glacierDate:d.glacier.features[0].properties.referenceDate,
-      icecapDate:d.icecap.features[0].properties.referenceDate
+      icecapDate:d.icecap.features[0].properties.referenceDate,
+      stationNames:d.stations.features.map(f=>f.properties.name),
+      stationKeys:d.stations.features.map(f=>Object.keys(f.properties)),
+      summitNames:d.summits.features.map(f=>f.properties.name),
+      emam:d.stations.features.find(f=>f.properties.name==='EMAM-Mocho')
     }))""")
-    assert study=={'imageDate':'2026-03-10','glacierDate':'2026-03-10','icecapDate':'2026-03-10'},study
+    assert study['imageDate']=='2026-03-10' and study['glacierDate']=='2026-03-10' and study['icecapDate']=='2026-03-10',study
+    assert study['stationNames']==['AWS Mocho1','AWS Mocho2','AWS DGA','EMAM-Mocho'],study
+    assert all(keys==['name','lat','lon'] for keys in study['stationKeys']),study
+    assert study['summitNames']==['Mocho','Choshuenco'],study
+    assert study['emam']['properties']=={'name':'EMAM-Mocho','lat':-39.94179041,'lon':-72.00936732},study
+    assert study['emam']['geometry']['coordinates']==[-72.00936732,-39.94179041],study
+    landmark_style=page.evaluate("""({
+      stationColor:mochoMap.getPaintProperty('station-dot','circle-color'),
+      summitIcon:mochoMap.hasImage('summit-triangle'),
+      stationsVisible:mochoMap.getLayoutProperty('station-dot','visibility')!=='none',
+      summitsVisible:mochoMap.getLayoutProperty('summit-symbol','visibility')!=='none'
+    })""")
+    assert landmark_style=={'stationColor':'#397bb3','summitIcon':True,'stationsVisible':True,'summitsVisible':True},landmark_style
     assert page.locator('#stake-select option').count() == 11
     assert page.locator('.stake-marker').count() == 0
     page.locator('#stake-select').select_option('B15')
@@ -48,22 +64,27 @@ with sync_playwright() as pw:
     }''')
     assert all(p['hit'] for p in placement), placement
     page.wait_for_selector('#history-content:not([hidden])')
-    assert page.locator('#history-chart [data-year]').count()==22
+    assert page.locator('#history-chart [data-year]').count()==23
     assert page.locator('.history-jump').is_visible()
     page.locator('.history-jump').click()
     page.wait_for_function("document.querySelector('#history-title').getBoundingClientRect().top < innerHeight")
     assert page.locator('#history-chart').is_visible()
     assert page.locator('#history-table').count()==0
-    assert page.locator('#history-download').is_visible()
+    assert page.locator('#history-download').count()==0
+    assert page.locator('.history-source').count()==0
     colors=page.evaluate("""({
       gain:getComputedStyle(document.querySelector('.positive .balance-bar')).fill,
       loss:getComputedStyle(document.querySelector('.negative .balance-bar')).fill
     })""")
     assert colors=={'gain':'rgb(57, 123, 179)','loss':'rgb(197, 83, 77)'},colors
+    page.locator('#history-chart [data-year="2025"]').focus()
+    assert page.locator('#history-year').inner_text()=='2025-2026'
+    assert page.locator('#history-value').inner_text()=='-3,38 m eq.a.'
+    assert '± 0,14 m eq.a.' in page.locator('#history-detail').inner_text()
     page.locator('#history-start').select_option('2022')
-    assert page.locator('#history-chart [data-year]').count()==3
+    assert page.locator('#history-chart [data-year]').count()==4
     page.locator('#history-uncertainty').check()
-    assert page.locator('#history-chart .uncertainty-line').count()==3
+    assert page.locator('#history-chart .uncertainty-line').count()==4
     page.locator('#history-reset').click()
     page.screenshot(path=str(out/'desktop.png'),full_page=True)
     # Chapter 2: hash navigation, interactive Figure 7/4 and return path.
@@ -102,9 +123,7 @@ with sync_playwright() as pw:
     assert not page.locator('#chart-show-contour').is_disabled()
     page.locator('#chart-show-contour').click()
     assert page.locator('#contour-select').input_value()=='2026'
-    with page.expect_download() as download:
-        page.locator('#variation-download').click()
-    assert download.value.suggested_filename.endswith('.csv')
+    assert page.locator('#variation-download').count()==0
     assert page.locator('body.chapter-two').count() == 1
     page.get_by_role('button', name='Restablecer',exact=True).click()
     assert page.locator('#variation-chart g[data-year]').count()==29
@@ -122,6 +141,12 @@ with sync_playwright() as pw:
     assert page.evaluate('mochoMap.getTerrain()') is None
     page.get_by_role('checkbox',name='Mostrar balizas GNSS',exact=True).uncheck()
     assert page.evaluate("mochoMap.getLayoutProperty('stake-dot','visibility')")=='none'
+    page.get_by_role('checkbox',name='Mostrar estaciones meteorológicas',exact=True).uncheck()
+    assert page.evaluate("mochoMap.getLayoutProperty('station-dot','visibility')")=='none'
+    page.get_by_role('checkbox',name='Mostrar estaciones meteorológicas',exact=True).check()
+    page.get_by_role('checkbox',name='Mostrar cumbres',exact=True).uncheck()
+    assert page.evaluate("mochoMap.getLayoutProperty('summit-symbol','visibility')")=='none'
+    page.get_by_role('checkbox',name='Mostrar cumbres',exact=True).check()
     page.get_by_role('checkbox',name='Mostrar glaciar Mocho',exact=True).uncheck()
     assert page.evaluate("mochoMap.getLayoutProperty('glacier-fill','visibility')")=='none'
     page.get_by_role('checkbox',name='Mostrar glaciar Mocho',exact=True).check()
@@ -129,12 +154,18 @@ with sync_playwright() as pw:
     point=page.evaluate('mochoMap.project([-72.00936732,-39.94179041])')
     box=page.locator('#map').bounding_box()
     page.mouse.click(box['x']+point['x'],box['y']+point['y'])
-    page.get_by_role('heading',name='Sector AWS-Mocho',exact=True).wait_for()
+    page.get_by_role('heading',name='EMAM-Mocho',exact=True).wait_for()
+    assert 'Latitud -39.94179041° · Longitud -72.00936732°' in page.locator('.maplibregl-popup-content').inner_text()
     page.locator('.maplibregl-popup-close-button').click()
     page.get_by_role('checkbox',name='Mostrar balizas GNSS',exact=True).check()
     page.wait_for_timeout(300)
     page.mouse.click(box['x']+point['x'],box['y']+point['y'])
     page.get_by_role('heading',name='Baliza B15',exact=True).wait_for()
+    page.locator('.maplibregl-popup-close-button').click()
+    summit_point=page.evaluate("""async()=>{const d=await (await fetch('./data/study-area.json')).json();return mochoMap.project(d.summits.features.find(f=>f.properties.name==='Mocho').geometry.coordinates)}""")
+    page.mouse.click(box['x']+summit_point['x'],box['y']+summit_point['y'])
+    page.get_by_role('heading',name='Mocho',exact=True).wait_for()
+    assert 'Latitud -39.93162° · Longitud -72.02994°' in page.locator('.maplibregl-popup-content').inner_text()
     page.locator('.maplibregl-popup-close-button').click()
     zoom=page.evaluate('mochoMap.getZoom()')
     page.get_by_role('button',name='Acercar',exact=True).click()
@@ -190,4 +221,4 @@ with sync_playwright() as pw:
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'historyColors':colors,'checks':['2026 study image and geometries','coordinate-only stake popup','Figure 2 gain/loss colors','Figure 2 without data table','3D elevation','GNSS screen placement','2D toggle','layers','point popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 3D contour map'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','Figure 2 gain/loss colors','no CSV downloads','Figure 2 without data table or source notes','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 3D contour map'],'pageErrors':errors},ensure_ascii=True))

@@ -7,24 +7,27 @@ import openpyxl
 
 
 def main():
+    repository = Path(__file__).resolve().parents[1]
+    out = repository / 'data'
     parser = argparse.ArgumentParser()
     parser.add_argument('--project', type=Path, required=True)
-    project = parser.parse_args().project
-    out = Path(__file__).resolve().parents[1] / 'data'
-    workbook = project / 'Documentos/bm_hist/bm_hist.xlsx'
+    parser.add_argument('--workbook', type=Path, default=out / 'bm_hist.xlsx')
+    args = parser.parse_args()
+    project = args.project.resolve(strict=True)
+    workbook = args.workbook.resolve(strict=True)
     rows = list(openpyxl.load_workbook(workbook, data_only=True)['Hoja1'].values)
     records = []
     for row in rows[1:]:
         year, period, _, balance, uncertainty, _, _, source = row
-        if not isinstance(year, (int, float)) or not 2003 <= year <= 2024:
+        if not isinstance(year, (int, float)) or not 2003 <= year <= 2025:
             continue
         records.append(dict(year=int(year), period=period, balance=balance, uncertainty=uncertainty,
-                            sourceLabel=source, provenance='Documentos/bm_hist/bm_hist.xlsx · Hoja1'))
-    assert len(records) == 22 and sum(r['balance'] is None for r in records) == 5
-    for year, value in {2003:-.88, 2004:.36, 2009:.69, 2022:-2.67, 2024:.88}.items():
+                            sourceLabel=source, provenance='data/bm_hist.xlsx · Hoja1'))
+    assert len(records) == 23 and sum(r['balance'] is None for r in records) == 5
+    for year, value in {2003:-.88, 2004:.36, 2009:.69, 2022:-2.67, 2024:.88, 2025:-3.38}.items():
         assert next(r['balance'] for r in records if r['year'] == year) == value
     data = dict(unit='m eq.a.', figure=2, printedPage=5, records=records,
-                source='Informe final — Mocho 2025–2026, Figura 2, p. 5; libro original bm_hist.xlsx, identificado en Codes/Figures_glaciares_chilenos.ipynb.',
+                source='Informe final — Mocho 2025–2026, Figura 2, p. 5; libro actualizado data/bm_hist.xlsx, Hoja1.',
                 note='Los años sin balance anual son null; no equivalen a cero. Incertidumbres según columna incer, sin asignar un nivel de confianza no documentado.')
     (out / 'mass-balance-history.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
     annex = project / '1_DASHBOARD/AnexosDigitales'

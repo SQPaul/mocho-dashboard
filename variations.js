@@ -93,10 +93,7 @@ function setupVariationChart() {
   }
   start.onchange=()=>{if(+start.value>+end.value)end.value=start.value;render();};end.onchange=()=>{if(+end.value<+start.value)start.value=end.value;render();};errors.onchange=render;
   el('#variation-reset').onclick=()=>{start.value=years[0];end.value=years.at(-1);errors.checked=true;render();};
-  el('#variation-download').onclick=()=>{
-    const csv='serie,año,area_km2,error_km2,tasa_km2_año,fuente\r\n'+series.flat().filter(r=>r.year>=+start.value&&r.year<=+end.value).map(r=>`${r.series},${r.year},${r.area},${r.error},${r.rate??''},Informe Mocho 2025-2026; Figura 4; Anexo 2`).join('\r\n');
-    const url=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='mocho-variaciones.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  };render();
+  render();
 }
 async function json(url){const r=await fetch(url);if(!r.ok)throw new Error(url);return r.json();}
 function chapter(n,push=true){

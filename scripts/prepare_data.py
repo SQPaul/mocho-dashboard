@@ -25,11 +25,31 @@ def collection(path, name, category, description, source, reference_date):
             },'geometry':mapping(geom)})
     return {'type':'FeatureCollection','features':features}
 
+def point_collection(path, prefix):
+    with fiona.open(path) as ds:
+        project = Transformer.from_crs(ds.crs, 4326, always_xy=True)
+        features = []
+        for index, feature in enumerate(ds):
+            properties = feature['properties']
+            coordinates = feature['geometry']['coordinates']
+            lon, lat = project.transform(coordinates[0], coordinates[1])
+            name = properties['Name'].strip()
+            features.append({'type':'Feature','id':f'{prefix}-{index + 1}','properties':{
+                'name':name,'lat':properties['Lat'],'lon':properties['Lon']
+            },'geometry':{'type':'Point','coordinates':[lon,lat]}})
+    return {'type':'FeatureCollection','features':features}
+
 def main():
+    repository=Path(__file__).resolve().parents[1]
     parser=argparse.ArgumentParser()
     parser.add_argument('--source',type=Path,required=True)
-    root=parser.parse_args().source.resolve(strict=True)
-    output=Path(__file__).resolve().parents[1]/'data'
+    parser.add_argument('--stations',type=Path,default=repository/'data/geometrias/estaciones.gpkg')
+    parser.add_argument('--summits',type=Path,default=repository/'data/geometrias/cumbres.shp')
+    args=parser.parse_args()
+    root=args.source.resolve(strict=True)
+    stations_path=args.stations.resolve(strict=True)
+    summits_path=args.summits.resolve(strict=True)
+    output=repository/'data'
     output.mkdir(exist_ok=True)
     variations=next(root.glob('2_*'))
     polygons=next(variations.glob('2_*'))
@@ -53,20 +73,32 @@ def main():
         east,south=affine*(width,height)
         to_geo=Transformer.from_crs(3857,4326,always_xy=True).transform
         corners=[to_geo(west,north),to_geo(east,north),to_geo(east,south),to_geo(west,south)]
+    stations=point_collection(stations_path,'station')
+    stakes=json.loads((output/'stakes.geojson').read_text(encoding='utf-8'))
+    b15=next(feature for feature in stakes['features'] if feature['id']=='B15')
+    b15_lon,b15_lat=b15['geometry']['coordinates'][:2]
+    stations['features'].append({'type':'Feature','id':'station-emam-mocho','properties':{
+        'name':'EMAM-Mocho','lat':b15_lat,'lon':b15_lon
+    },'geometry':{'type':'Point','coordinates':[b15_lon,b15_lat]}})
+    summits=point_collection(summits_path,'summit')
+    def source_label(path):
+        try:
+            return path.relative_to(repository).as_posix()
+        except ValueError:
+            return path.name
     data={
         'report':{'title':'Informe final — Mocho 2025–2026, versión final','section':'1.1','pages':[3,4]},
         'imageCoordinates':corners,'navigationBounds':[[corners[0][0],corners[2][1]],[corners[2][0],corners[0][1]]],
         'imageDate':'2026-03-10',
         'glacier':collection(glacier_path,'Glaciar Mocho','Área de estudio · 2026','Vertiente suroriental del complejo Mocho–Choshuenco. Superficie de referencia: 4,91 ± 0,09 km².','Anexo 2; delimitación sobre Sentinel-2 del 10/03/2026.','2026-03-10'),
         'icecap':collection(icecap_path,'Capa de hielo Mocho–Choshuenco','Contexto glaciológico · 2026','Conjunto de cuerpos de hielo del complejo volcánico. Superficie de referencia: 12,12 ± 0,43 km².','Anexo 2; delimitación sobre Sentinel-2 del 10/03/2026.','2026-03-10'),
-        'points':{'type':'FeatureCollection','features':[
-            {'type':'Feature','id':'bmch','geometry':{'type':'Point','coordinates':[-(72+28.08/3600),-(39+55/60+47.7903/3600)]},'properties':{'name':'Base geodésica BMCH','category':'Referencia GNSS','description':'Punto de referencia instalado por la Universidad Austral de Chile. Base de los levantamientos GNSS.','source':'Coordenadas: Tabla 2 del informe, página 30.'}},
-            {'type':'Feature','id':'aws-sector','geometry':{'type':'Point','coordinates':[-72.00936732,-39.94179041]},'properties':{'name':'Sector AWS-Mocho','category':'Referencia de sector · B15','description':'AWS estival a aproximadamente 1.920 m s.n.m. El marcador corresponde a B15, cercana a la estación; no indica su coordenada exacta.','source':'Anexo 3, B15, levantamiento de noviembre de 2025; informe, sección 8.2.1.'}}
-        ]},
-        'provenance':{'glacier':str(glacier_path.relative_to(root)),'icecap':str(icecap_path.relative_to(root)),'satellite':str(image_path.relative_to(root)),'outputCrs':'EPSG:4326','imageCrs':'EPSG:3857'}
+        'stations':stations,'summits':summits,
+        'provenance':{'glacier':str(glacier_path.relative_to(root)),'icecap':str(icecap_path.relative_to(root)),'satellite':str(image_path.relative_to(root)),
+                      'stations':source_label(stations_path),'summits':source_label(summits_path),'emamMocho':'Baliza B15 · data/stakes.geojson',
+                      'outputCrs':'EPSG:4326','imageCrs':'EPSG:3857'}
     }
     (output/'study-area.json').write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
-    print(f'Created {len(data["glacier"]["features"])} glacier polygons, {len(data["icecap"]["features"])} ice-cap polygons and 2 points.')
+    print(f'Created {len(data["glacier"]["features"])} glacier polygons, {len(data["icecap"]["features"])} ice-cap polygons, {len(stations["features"])} stations and {len(summits["features"])} summits.')
     print(f'Image: {width} x {height}; {(output/"satellite-2026.webp").stat().st_size/1e6:.2f} MB')
 
 if __name__=='__main__':
