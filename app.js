@@ -1,4 +1,4 @@
-import {createTerrainMap,bindMapControls,showPopup} from './map-common.js';
+import {createTerrainMap,bindMapControls,showPopup,addStakeLayers} from './map-common.js';
 const $=s=>document.querySelector(s),message=$('#map-message');
 let map;
 const groups={glacier:['glacier-fill','glacier-line'],icecap:['icecap-fill','icecap-line'],stations:['station-halo','station-dot'],summits:['summit-symbol']};
@@ -12,16 +12,9 @@ const coordinatePopup=(feature,category)=>popup({name:feature.properties.name,ca
   description:`Latitud ${feature.properties.lat}° · Longitud ${feature.properties.lon}°`},feature.geometry.coordinates.slice(0,2));
 async function addStakes(){
   const response=await fetch('./data/stakes.geojson');if(!response.ok)throw new Error('Balizas no disponibles');
-  const data=await response.json();map.addSource('stakes',{type:'geojson',data});
+  const data=await response.json();
   // Native points follow the same terrain as glacier boundaries: no DOM offsets.
-  map.addLayer({id:'stake-dot',type:'circle',source:'stakes',paint:{'circle-radius':5,'circle-color':'#f0f3c3','circle-stroke-color':'#173b3c','circle-stroke-width':1.5}});
-  for(const f of data.features){
-    const canvas=document.createElement('canvas');canvas.width=100;canvas.height=44;
-    const ctx=canvas.getContext('2d');ctx.font='bold 22px sans-serif';ctx.lineWidth=5;ctx.strokeStyle='#173b3c';ctx.fillStyle='#f8f8e4';
-    ctx.strokeText(f.properties.name,6,30);ctx.fillText(f.properties.name,6,30);
-    map.addImage(f.id,ctx.getImageData(0,0,100,44),{pixelRatio:2});
-  }
-  map.addLayer({id:'stake-label',type:'symbol',source:'stakes',layout:{'icon-image':['get','name'],'icon-anchor':'left','icon-offset':[8,-8],'icon-allow-overlap':false,'icon-ignore-placement':true}});
+  addStakeLayers(map,data);
   const select=$('#stake-select');for(const f of data.features)select.add(new Option(f.properties.name,f.id));
   const inspect=f=>{const p=f.properties,c=f.geometry.coordinates;popup({name:`Baliza ${p.name}`,category:'Coordenadas WGS84',description:`Latitud ${c[1].toFixed(6)}° · Longitud ${c[0].toFixed(6)}°`},c);};
   select.onchange=()=>{const f=data.features.find(f=>f.id===select.value);if(f)inspect(f);};

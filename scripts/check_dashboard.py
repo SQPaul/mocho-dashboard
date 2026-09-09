@@ -150,7 +150,7 @@ with sync_playwright() as pw:
     page.wait_for_timeout(1200)
     assert page.locator('body.chapter-three').count()==1
     assert page.locator('#chapter-label').inner_text()=='03 Caracterización del manto nival'
-    assert page.locator('#snow-title').inner_text()=='Midiendo lo invisible,\nla nieve bajo nuestros pies'
+    assert page.locator('#snow-title').inner_text()=='Midiendo lo invisible\nla nieve bajo nuestros pies'
     assert page.locator('#chapter-three').is_visible() and page.locator('#chapter-two').is_hidden()
     assert page.evaluate('mochoSnowMap.getTerrain()') is not None
     assert page.evaluate('mochoSnowMap.getPitch()')>40
@@ -162,6 +162,8 @@ with sync_playwright() as pw:
     assert snow_manifest['colorScale']['min']==0 and snow_manifest['colorScale']['max']==17,snow_manifest
     assert snow_manifest['colorScale']['ticks']==[0,3,6,9,12,15,17],snow_manifest
     assert all(len(row['imageCoordinates'])==4 for row in snow_manifest['campaigns']),snow_manifest
+    assert all(set(row['stakeThickness'])=={'B8','B10','B11','B12','B13','B14','B15','B17','B18','B19'} for row in snow_manifest['campaigns']),snow_manifest
+    assert all(all(isinstance(value,(int,float)) for value in row['stakeThickness'].values()) for row in snow_manifest['campaigns']),snow_manifest
     assert page.locator('#snow-scale-ticks').inner_text().split()==['0','3','6','9','12','15','17']
     assert 'linear-gradient' in page.locator('#snow-colorbar').evaluate("node=>getComputedStyle(node).backgroundImage")
     visibility=page.evaluate("""Object.fromEntries([2021,2022,2023,2024,2025].map(year=>[year,mochoSnowMap.getLayoutProperty(`gpr-${year}`,'visibility')]))""")
@@ -170,6 +172,26 @@ with sync_playwright() as pw:
     assert page.evaluate("mochoSnowMap.getLayoutProperty('gpr-2024','visibility')")=='visible'
     assert page.evaluate("mochoSnowMap.getLayoutProperty('gpr-2025','visibility')")=='none'
     assert '19 OCT 2024' in page.locator('#snow-selection').inner_text()
+    page.wait_for_function('window.mochoSnowStakesReady === true')
+    snow_stake_placement=page.evaluate('''async () => {
+      const data=await (await fetch('./data/stakes.geojson')).json();
+      return data.features.map(f=>{
+        const p=mochoSnowMap.project(f.geometry.coordinates);
+        return {id:f.id,x:p.x,y:p.y,hit:mochoSnowMap.queryRenderedFeatures([[p.x-8,p.y-8],[p.x+8,p.y+8]],{layers:['snow-stake-dot']}).some(h=>h.properties.name===f.id)};
+      });
+    }''')
+    assert all(point['hit'] for point in snow_stake_placement),snow_stake_placement
+    b15=next(point for point in snow_stake_placement if point['id']=='B15')
+    snow_box=page.locator('#snow-map').bounding_box()
+    page.mouse.click(snow_box['x']+b15['x'],snow_box['y']+b15['y'])
+    page.get_by_role('heading',name='Baliza B15',exact=True).wait_for()
+    for year,label,value in [(2021,'08 OCT 2021','4,46'),(2022,'14 OCT 2022','6,35'),(2023,'17 OCT 2023','3,19'),(2024,'19 OCT 2024','4,24'),(2025,'19 OCT 2025','2,42')]:
+        page.locator(f'#snow-campaign-controls input[value="{year}"]').check()
+        popup=page.locator('.maplibregl-popup-content').inner_text()
+        assert f'GPR · {label}' in popup,popup
+        assert f'Espesor del manto nival · {value} m' in popup,popup
+    page.locator('#chapter-three .variation-map-card').screenshot(path=str(out/'snow-stake-popup.png'))
+    page.locator('.maplibregl-popup-close-button').click()
     assert page.locator('#snow-table-body tr').count()==5
     table_rows=page.locator('#snow-table-body tr').all_inner_texts()
     assert table_rows[0].split()==['Oct','2021','14.295','7,30','5,02','0,73','3,08','7,18'],table_rows
@@ -326,4 +348,4 @@ with sync_playwright() as pw:
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','no public GitHub links','minimal glacier and ice-cap popups','minimal contour year details','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map','chapter 3 hash navigation','five exclusive GPR campaigns','shared Blues scale 0-17 m','ten GPR stake markers','stake thickness for every campaign','GPR summary table','GPR asset fallback'],'pageErrors':errors},ensure_ascii=True))

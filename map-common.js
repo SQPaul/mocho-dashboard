@@ -39,3 +39,17 @@ export function showPopup(map,properties,coordinates){
   for(const [tag,key] of [['span','category'],['h3','name'],['p','description'],['p','source']]){if(!properties[key])continue;const node=document.createElement(tag);node.textContent=properties[key];if(tag==='span')node.className='popup-tag';root.append(node);}
   return new maplibregl.Popup({maxWidth:'310px',offset:12}).setLngLat(coordinates).setDOMContent(root).addTo(map);
 }
+
+export function addStakeLayers(map,data,{sourceId='stakes',layerPrefix='stake'}={}){
+  map.addSource(sourceId,{type:'geojson',data});
+  map.addLayer({id:`${layerPrefix}-dot`,type:'circle',source:sourceId,paint:{'circle-radius':5,'circle-color':'#f0f3c3','circle-stroke-color':'#173b3c','circle-stroke-width':1.5}});
+  for(const feature of data.features){
+    const imageId=`${layerPrefix}-${feature.properties.name}`;
+    const canvas=document.createElement('canvas');canvas.width=100;canvas.height=44;
+    const context=canvas.getContext('2d');context.font='bold 22px sans-serif';context.lineWidth=5;context.strokeStyle='#173b3c';context.fillStyle='#f8f8e4';
+    context.strokeText(feature.properties.name,6,30);context.fillText(feature.properties.name,6,30);
+    map.addImage(imageId,context.getImageData(0,0,100,44),{pixelRatio:2});
+  }
+  map.addLayer({id:`${layerPrefix}-label`,type:'symbol',source:sourceId,layout:{'icon-image':['concat',`${layerPrefix}-`,['get','name']],'icon-anchor':'left','icon-offset':[8,-8],'icon-allow-overlap':false,'icon-ignore-placement':true}});
+  return [`${layerPrefix}-dot`,`${layerPrefix}-label`];
+}

@@ -47,7 +47,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - Fuentes históricas: `P:\Projects\Mocho_DGA\SIG\Delimitacion_glaciar` (2000–2022), `2023-2024\GIS\Delimitacion` (2023–2024) y anexo 2 de `2025-2026\1_DASHBOARD` (1976, 1986, 2015, 2025 y 2026). Rutas exactas en `HISTORICAL` del generador y propiedades de cada contorno.
 - data/study-area.json, data/mass-balance-history.json, data/stakes.geojson, data/glacier-variations.json, data/icecap-history.geojson, data/gpr-campaigns.json, cinco `gpr-YYYY.webp` y data/satellite-2026.webp: derivados web activos. La serie de balance llega a 2025–2026; `satellite-2025.webp` se conserva como antecedente.
 - scripts/prepare_data.py: regenera derivados desde AnexosDigitales sin alterar originales.
-- scripts/prepare_gpr.py: aplica Blues con escala fija 0–17 m, preserva NoData como transparencia y transforma las cuatro esquinas de cada GeoTIFF a WGS84.
+- scripts/prepare_gpr.py: aplica Blues con escala fija 0–17 m, preserva NoData como transparencia, transforma las cuatro esquinas de cada GeoTIFF a WGS84 y muestrea el espesor en las diez balizas.
 - scripts/check_dashboard.py: prueba 3D, 2D, capas, fichas, controles, móvil y fallback.
 - vendor/: MapLibre GL JS 6.8.0 y licencia.
 

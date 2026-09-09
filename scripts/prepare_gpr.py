@@ -30,9 +30,29 @@ def corners_wgs84(dataset):
     return [[round(lon, 9), round(lat, 9)] for lon, lat in (transformer.transform(x, y) for x, y in native)]
 
 
-def prepare(source_dir, output_dir):
+def sample_stakes(dataset, values, stakes):
+    """Read the GPR thickness at each WGS84 stake coordinate."""
+    transformer = Transformer.from_crs('EPSG:4326', dataset.crs, always_xy=True)
+    mask = np.ma.getmaskarray(values)
+    samples = {}
+    for feature in stakes['features']:
+        name = feature['properties']['name']
+        lon, lat = feature['geometry']['coordinates'][:2]
+        x, y = transformer.transform(lon, lat)
+        row, col = dataset.index(x, y)
+        value = None
+        if 0 <= row < dataset.height and 0 <= col < dataset.width and not mask[row, col]:
+            candidate = float(values[row, col])
+            if np.isfinite(candidate):
+                value = round(candidate, 2)
+        samples[name] = value
+    return samples
+
+
+def prepare(source_dir, output_dir, stakes_path):
     cmap = colormaps['Blues']
     campaigns = []
+    stakes = json.loads(stakes_path.read_text(encoding='utf-8'))
     files = sorted(source_dir.glob('GPR_*.tif'))
     if len(files) != 5:
         raise SystemExit(f'Se esperaban 5 GeoTIFF GPR y se encontraron {len(files)} en {source_dir}')
@@ -63,6 +83,7 @@ def prepare(source_dir, output_dir):
                 'rasterMin': float(valid.min()),
                 'rasterMax': float(valid.max()),
                 'validPixels': int(valid.size),
+                'stakeThickness': sample_stakes(dataset, values, stakes),
             })
 
     stops = []
@@ -86,7 +107,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=Path, default=ROOT / 'data' / 'GPR')
     parser.add_argument('--output', type=Path, default=ROOT / 'data')
+    parser.add_argument('--stakes', type=Path, default=ROOT / 'data' / 'stakes.geojson')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    result = prepare(args.source, args.output)
+    result = prepare(args.source, args.output, args.stakes)
     print(json.dumps({'campaigns': len(result['campaigns']), 'years': [item['year'] for item in result['campaigns']], 'scale': result['colorScale']}, ensure_ascii=False))

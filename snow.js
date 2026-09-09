@@ -1,10 +1,12 @@
-import {createTerrainMap,bindMapControls} from './map-common.js';
+import {createTerrainMap,bindMapControls,showPopup,addStakeLayers} from './map-common.js';
 
 const el = selector => document.querySelector(selector);
 let snowMap;
 let snowLoading;
 let snowData;
 let activeYear;
+let activeStake;
+let stakePopup;
 
 const json = async url => {
   const response = await fetch(url);
@@ -33,6 +35,19 @@ function renderScale(scale){
   scale.ticks.forEach(value=>{const span=document.createElement('span');span.textContent=value;ticks.append(span);});
 }
 
+function inspectStake(feature){
+  const campaign=snowData.campaigns.find(item=>item.year===activeYear);
+  if(!campaign)return;
+  const name=feature.properties.name;
+  const thickness=campaign.stakeThickness?.[name];
+  const description=Number.isFinite(thickness)?`Espesor del manto nival · ${number(thickness)} m`:'Espesor del manto nival no disponible.';
+  if(stakePopup){const previous=stakePopup;stakePopup=null;previous.remove();}
+  activeStake=feature;
+  const current=showPopup(snowMap,{name:`Baliza ${name}`,category:`GPR · ${campaign.label}`,description},feature.geometry.coordinates);
+  stakePopup=current;
+  current.on('close',()=>{if(stakePopup===current){stakePopup=null;activeStake=null;}});
+}
+
 function selectCampaign(year){
   activeYear=year;
   for(const input of document.querySelectorAll('#snow-campaign-controls input'))input.checked=+input.value===year;
@@ -41,7 +56,8 @@ function selectCampaign(year){
     if(snowMap?.getLayer(layer))snowMap.setLayoutProperty(layer,'visibility',campaign.year===year?'visible':'none');
   }
   const selected=snowData.campaigns.find(campaign=>campaign.year===year);
-  if(selected)el('#snow-selection').textContent=`Campaña seleccionada · ${selected.label}`;
+  if(selected)el('#snow-selection').textContent=`Campaña seleccionada · ${selected.label} · Selecciona una baliza para consultar el espesor.`;
+  if(activeStake&&snowMap?.getLayer('snow-stake-dot'))inspectStake(activeStake);
 }
 
 function renderCampaigns(data){
@@ -56,7 +72,7 @@ function renderCampaigns(data){
   selectCampaign(data.defaultYear);
 }
 
-function setupMap(study,data){
+function setupMap(study,data,stakes){
   const message=el('#snow-map-message');
   const notice=text=>{message.textContent=text;message.classList.remove('hidden');message.classList.add('notice');};
   snowMap=createTerrainMap('snow-map',study,'./data/satellite-2026.webp');
@@ -76,6 +92,17 @@ function setupMap(study,data){
       snowMap.addSource(id,{type:'image',url:`./data/${campaign.image}`,coordinates:campaign.imageCoordinates});
       snowMap.addLayer({id,type:'raster',source:id,layout:{visibility:campaign.year===activeYear?'visible':'none'},paint:{'raster-opacity':.82,'raster-fade-duration':0,'raster-resampling':'linear'}});
     });
+    if(stakes){
+      addStakeLayers(snowMap,stakes,{sourceId:'snow-stakes',layerPrefix:'snow-stake'});
+      const stakeLayers=['snow-stake-dot','snow-stake-label'];
+      snowMap.on('click',event=>{
+        const hit=snowMap.queryRenderedFeatures(event.point,{layers:stakeLayers})[0];
+        const feature=hit&&stakes.features.find(item=>item.properties.name===hit.properties.name);
+        if(feature)inspectStake(feature);
+      });
+      snowMap.on('mousemove',event=>{snowMap.getCanvas().style.cursor=snowMap.queryRenderedFeatures(event.point,{layers:stakeLayers}).length?'pointer':'';});
+      window.mochoSnowStakesReady=true;
+    }else notice('No fue posible cargar las balizas. Las campañas GPR siguen disponibles.');
     selectCampaign(activeYear);
     if(!navigation.terrainFailed&&!message.classList.contains('notice'))message.classList.add('hidden');
     window.mochoSnowReady=true;
@@ -85,7 +112,8 @@ function setupMap(study,data){
 export function initSnowChapter(){
   if(snowLoading)return snowLoading;
   window.mochoSnowReady=false;
-  snowLoading=Promise.allSettled([json('./data/study-area.json'),json('./data/gpr-campaigns.json')]).then(([studyResult,dataResult])=>{
+  window.mochoSnowStakesReady=false;
+  snowLoading=Promise.allSettled([json('./data/study-area.json'),json('./data/gpr-campaigns.json'),json('./data/stakes.geojson')]).then(([studyResult,dataResult,stakesResult])=>{
     if(dataResult.status==='fulfilled'){
       snowData=dataResult.value;renderCampaigns(snowData);renderScale(snowData.colorScale);renderTable(snowData.summary);
     }else{
@@ -93,7 +121,7 @@ export function initSnowChapter(){
       el('#snow-table-loading').textContent='No fue posible cargar el resumen GPR.';
     }
     if(studyResult.status==='fulfilled'&&dataResult.status==='fulfilled'){
-      try{setupMap(studyResult.value,snowData);}catch{el('#snow-map-message').textContent='No fue posible iniciar el mapa 3D. Recarga la página para reintentar.';}
+      try{setupMap(studyResult.value,snowData,stakesResult.status==='fulfilled'?stakesResult.value:null);}catch{el('#snow-map-message').textContent='No fue posible iniciar el mapa 3D. Recarga la página para reintentar.';}
     }else if(studyResult.status==='rejected')el('#snow-map-message').textContent='No fue posible cargar el mapa base. Recarga la página para reintentar.';
   });
   return snowLoading;

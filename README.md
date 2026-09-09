@@ -29,13 +29,13 @@ Se conservan las cifras publicadas en el informe. La geometría archivada tiene 
 
 `icecap-history.geojson` incorpora 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026, con archivo y CRS original por contorno. Fuentes históricas: `Mocho_DGA/SIG/Delimitacion_glaciar`, `Mocho_DGA/2023-2024/GIS/Delimitacion` y los polígonos verificados del Anexo 2. La Figura 7 tiene cobertura completa respecto de la serie publicada. No se publican el ZIP de anexos, los registros GNSS originales ni el PDF completo.
 
-`gpr-campaigns.json` describe las cinco campañas, sus coordenadas WGS84, la escala compartida y la tabla de resumen. `gpr-2021.webp` a `gpr-2025.webp` son derivados RGBA transparentes; los GeoTIFF originales permanecen fuera de Git.
+`gpr-campaigns.json` describe las cinco campañas, sus coordenadas WGS84, la escala compartida, el espesor GPR muestreado en las diez balizas y la tabla de resumen. `gpr-2021.webp` a `gpr-2025.webp` son derivados RGBA transparentes; los GeoTIFF originales permanecen fuera de Git.
 
 Regeneración: `python scripts/prepare_data.py --source RUTA/AnexosDigitales`. El generador toma por defecto `data/geometrias/estaciones.gpkg`, `data/geometrias/cumbres.shp` y B15 desde el derivado de balizas. Dependencias: Fiona, Shapely, pyproj, Rasterio, NumPy y Pillow. No requiere GeoPandas.
 
 Figura 2 y balizas: `python scripts/prepare_history_stakes.py`; la serie usa por defecto `data/bm_hist.xlsx` e incluye 2025–2026. Capítulo 2: `python scripts/prepare_variations.py` (añade openpyxl; rutas del archivo local definidas al inicio). El entorno `C:\Users\pauls\anaconda3\envs\geopy\python.exe` dispone de estas dependencias.
 
-Capítulo 3: `python scripts/prepare_gpr.py`. Lee `data/GPR/GPR_DDMMYYYY.tif`, aplica Blues 0–17 m y genera únicamente los WebP y el manifiesto necesarios para la web. Requiere Rasterio, pyproj, NumPy, Pillow y Matplotlib.
+Capítulo 3: `python scripts/prepare_gpr.py`. Lee `data/GPR/GPR_DDMMYYYY.tif`, aplica Blues 0–17 m, muestrea cada raster en las coordenadas de `data/stakes.geojson` y genera únicamente los WebP y el manifiesto necesarios para la web. Requiere Rasterio, pyproj, NumPy, Pillow y Matplotlib.
 
 ## Publicación y verificación
 

@@ -1,6 +1,6 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Estado final: los tres capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–17 m y una tabla web exacta. La interfaz muestra títulos sin números de figura, no enlaza a GitHub y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Estado final: los tres capítulos reutilizan el mapa 3D/2D de `map-common.js`. El capítulo 3 añade cinco campañas GPR con paleta Blues común de 0–17 m, diez balizas con espesor consultable por año y una tabla web exacta. La interfaz muestra títulos sin números de figura, no enlaza a GitHub y los mapas comienzan en 3D. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
