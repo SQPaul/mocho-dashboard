@@ -7,6 +7,21 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'.cache'/'browser-deps'))
 from playwright.sync_api import sync_playwright
 
+CREDIT_LABELS=[
+    'Diseño y desarrollo',
+    'Desarrollo del informe',
+    'Financiamiento',
+]
+CREDIT_VALUES=['Paul Sandoval-Quilodrán','GlacioUACh','DGA']
+
+def assert_credits(locator):
+    items=locator.locator('.credit-item')
+    assert items.count()==3
+    assert items.locator('span').all_text_contents()==CREDIT_LABELS
+    assert items.locator('span').all_inner_texts()==[label.upper() for label in CREDIT_LABELS]
+    assert items.locator('b').all_text_contents()==CREDIT_VALUES
+    assert locator.locator('small').inner_text()=='Datos e informe · DGA / Universidad Austral de Chile'
+
 url=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8000'
 out=ROOT/'test-results'
 out.mkdir(exist_ok=True)
@@ -22,7 +37,9 @@ with sync_playwright() as pw:
     assert page.locator('#fallback').is_hidden()
     assert page.locator('.monitoring').count()==0
     assert page.locator('a[href*="github.com"]').count()==0
-    assert page.locator('.author-name').inner_text()=='Paul Sandoval-Quilodrán'
+    assert page.locator('.chapter-credits').count()==5
+    assert page.locator('.author-name').all_inner_texts()==['Paul Sandoval-Quilodrán']*5
+    assert_credits(page.locator('.sidebar .chapter-credits'))
     terrain=page.evaluate('({pitch:mochoMap.getPitch(),terrain:mochoMap.getTerrain(),elevation:mochoMap.queryTerrainElevation([-72.025,-39.933])})')
     assert terrain['terrain'] is not None, terrain
     assert terrain['elevation'] and terrain['elevation']>1000, terrain
@@ -104,6 +121,7 @@ with sync_playwright() as pw:
     assert page.locator('#variation-map .contour-svg').count()==0
     assert page.locator('#chapter-two .variation-map-card .eyebrow').inner_text()=='DELIMITACIONES SOBRE EL RELIEVE'
     assert page.locator('#chapter-two .variation-chart-card .eyebrow').inner_text()=='SERIE HISTÓRICA'
+    assert_credits(page.locator('#chapter-two .chapter-credits'))
     assert page.locator('.variation-source').count()==0
     assert page.locator('#variation-table').count()==0
     assert page.locator('#contour-controls input:not(:disabled)').count()==12
@@ -152,6 +170,7 @@ with sync_playwright() as pw:
     assert page.locator('#chapter-label').inner_text()=='03 Caracterización del manto nival'
     assert page.locator('#snow-title').inner_text()=='Midiendo lo invisible\nla nieve bajo nuestros pies'
     assert page.locator('#chapter-three').is_visible() and page.locator('#chapter-two').is_hidden()
+    assert_credits(page.locator('#chapter-three .chapter-credits'))
     assert page.evaluate('mochoSnowMap.getTerrain()') is not None
     assert page.evaluate('mochoSnowMap.getPitch()')>40
     assert page.locator('#snow-map canvas').is_visible()
@@ -214,6 +233,7 @@ with sync_playwright() as pw:
     assert page.locator('#chapter-label').inner_text()=='04 Cinemática glaciar'
     assert page.locator('#velocity-title').inner_text()=='El hielo avanza\nfluyamos con él'
     assert page.locator('#chapter-four').is_visible() and page.locator('#chapter-three').is_hidden()
+    assert_credits(page.locator('#chapter-four .chapter-credits'))
     assert page.evaluate('mochoVelocityMap.getTerrain()') is not None
     assert page.evaluate('mochoVelocityMap.getPitch()')>40
     assert page.locator('#velocity-map canvas').is_visible()
@@ -276,6 +296,7 @@ with sync_playwright() as pw:
     assert page.locator('#chapter-label').inner_text()=='05 Las personas tras el dato'
     assert page.locator('#album-title').inner_text()=='La ciencia se construye con datos, pero la hacen las personas.'
     assert page.locator('#chapter-five').is_visible() and page.locator('#chapter-four').is_hidden()
+    assert_credits(page.locator('#chapter-five .chapter-credits'))
     assert page.locator('#album-list .album-item').count()==7
     assert page.locator('#album-list img').count()==7
     assert page.locator('#album-list figcaption').count()==0
@@ -298,6 +319,8 @@ with sync_playwright() as pw:
     assert album_focus[3]['focus']>.98 and album_focus[3]['opacity']>.98,album_focus
     assert album_focus[0]['focus']==0 and album_focus[0]['opacity']<album_focus[3]['opacity'],album_focus
     page.screenshot(path=str(out/'album-focus.png'),full_page=False)
+    page.locator('#chapter-five .chapter-credits').scroll_into_view_if_needed()
+    page.locator('#chapter-five .chapter-credits').screenshot(path=str(out/'album-credits.png'))
     page.locator('#chapter-five .back-link').click()
     page.wait_for_function("document.body.classList.contains('chapter-four')")
     assert page.locator('#velocity-map canvas').is_visible()
@@ -407,6 +430,13 @@ with sync_playwright() as pw:
     page.wait_for_timeout(400)
     assert page.locator('.album-item.is-active').get_attribute('data-order')=='3'
     page.screenshot(path=str(out/'album-mobile.png'),full_page=False)
+    mobile_credits=page.locator('#chapter-five .chapter-credits')
+    mobile_credits.scroll_into_view_if_needed()
+    assert_credits(mobile_credits)
+    mobile_credit_layout=mobile_credits.locator('.credit-item').evaluate_all("nodes=>nodes.map(node=>{const box=node.getBoundingClientRect();return {x:box.x,y:box.y,width:box.width}})")
+    assert all(mobile_credit_layout[i]['y']<mobile_credit_layout[i+1]['y'] for i in range(2)),mobile_credit_layout
+    assert max(row['x'] for row in mobile_credit_layout)-min(row['x'] for row in mobile_credit_layout)<1,mobile_credit_layout
+    page.locator('#chapter-five .chapter-credits').screenshot(path=str(out/'album-credits-mobile.png'))
     page.locator('#chapter-five .back-link').click()
     page.locator('#chapter-four .back-link').click()
     page.locator('#chapter-three .back-link').click()
