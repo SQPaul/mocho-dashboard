@@ -12,7 +12,7 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 - Sitio público: https://sqpaul.github.io/mocho-dashboard/
 - Rama publicada: main, raíz del repositorio mediante GitHub Pages.
 - Primera vista terminada: mapa 3D/2D, imagen Sentinel-2 y delimitaciones 2026, cuatro estaciones meteorológicas, cumbres Mocho/Choshuenco, métricas, fuentes y diseño móvil.
-- Capítulo 2: navegación horizontal `#capitulo-1` / `#capitulo-2`, Figura 2 con pérdidas rojas y ganancias azules, sin tabla ni descarga; Figura 4 con dos paneles interactivos y tabla, sin descarga; Figura 7 con el mismo mapa 3D/2D del capítulo 1 y las 12 delimitaciones de la serie publicada.
+- Capítulos 1 y 2 terminados: navegación horizontal `#capitulo-1` / `#capitulo-2`, balance de masa con pérdidas rojas y ganancias azules; dos paneles históricos de superficie; y mapa 3D/2D con las 12 delimitaciones de la serie publicada. La interfaz omite números de figura, tablas, notas metodológicas desplegables y descargas.
 - Contornos disponibles: 1976, 1986, 2000, 2005, 2015, 2017, 2020, 2022, 2023, 2024, 2025 y 2026. La cobertura de la Figura 7 está completa.
 - Balizas: diez puntos nativos de MapLibre sobre el relieve, sin desplazamientos de marcadores HTML; la ficha consultable muestra solo nombre y coordenadas WGS84. B15 y EMAM-Mocho comparten coordenada, con prioridad para la baliza.
 - Autoría visible: **Diseño y desarrollo — Paul Sandoval-Quilodrán**; debajo, **Desarrollo del informe — GlacioUACh**.
@@ -60,4 +60,4 @@ Crear un dashboard público de despedida del proyecto de monitoreo del glaciar M
 
 ## Próximo paso
 
-La Figura 7 ya tiene las doce geometrías verificadas de la serie publicada. Mantener la primera pantalla enfocada en el área de estudio y conservar la trazabilidad de cada contorno al regenerar los datos.
+No quedan tareas pendientes en los capítulos 1 y 2. Para futuras ampliaciones, mantener la primera pantalla enfocada en el área de estudio y conservar la trazabilidad de cada contorno al regenerar los datos.

@@ -23,7 +23,7 @@ async function initHistory() {
     $('#history-year').textContent = row.period;
     $('#history-value').textContent = row.balance === null ? 'Sin dato' : `${signed(row.balance)} m eq.a.`;
     $('#history-detail').textContent = row.balance === null
-      ? 'La Figura 2 no presenta un balance anual para este período. No equivale a un balance cero.'
+      ? 'La serie no presenta un balance anual para este período. No equivale a un balance cero.'
       : `${row.balance > 0 ? 'Ganancia' : 'Pérdida'} de masa anual. ${row.uncertainty === null ? 'Incertidumbre no indicada en el libro original.' : `Incertidumbre: ± ${number(row.uncertainty)} m eq.a., según el libro original.`}`;
     for (const mark of chart.querySelectorAll('[data-year]')) mark.classList.toggle('selected', Number(mark.dataset.year) === row.year);
   }

@@ -52,7 +52,7 @@ async function init(){
     const hitLayers=()=>['stake-dot','stake-label','station-dot','station-halo','summit-symbol','glacier-fill','icecap-fill'].filter(id=>map.getLayer(id));
     map.on('click',e=>{const features=map.queryRenderedFeatures(e.point,{layers:hitLayers()});if(!features.length||features.some(f=>f.source==='stakes'))return;
       const f=features.find(f=>f.source==='stations')||features.find(f=>f.source==='summits')||features.find(f=>f.source==='glacier')||features[0];
-      if(f.source==='stations')coordinatePopup(f);else if(f.source==='summits')coordinatePopup(f,'Cumbre');else popup(f.properties,e.lngLat);
+      if(f.source==='stations')coordinatePopup(f);else if(f.source==='summits')coordinatePopup(f,'Cumbre');else popup({name:f.properties.name},e.lngLat);
     });
     map.on('mousemove',e=>{map.getCanvas().style.cursor=map.queryRenderedFeatures(e.point,{layers:hitLayers()}).length?'pointer':'';});
     addStakes().catch(()=>{$('#stakes-status').textContent='No fue posible cargar las balizas. Recarga la página para reintentar.';$('#show-stakes').disabled=true;});window.mochoReady=true;

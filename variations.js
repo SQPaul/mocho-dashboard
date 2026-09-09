@@ -46,7 +46,7 @@ function syncContours(){
 function inspectContour(year,coordinates){
   const f=mapData.features.find(f=>f.properties.year===year);if(!f)return;
   selectedContours.add(year);syncContours();el('#contour-select').value=year;
-  const p=f.properties,description=p.area===null?'Sin superficie publicada para este año en la Figura 4.':`Superficie publicada: ${fmt(p.area)} ± ${fmt(p.error)} km². Figura 4 · Anexo 2.`;
+  const p=f.properties,description=p.area===null?'Sin superficie publicada para este año.':`Superficie publicada: ${fmt(p.area)} ± ${fmt(p.error)} km².`;
   el('#contour-detail').textContent=`${year} · ${description} Archivo: ${p.source.split('/').at(-1)} · ${p.sourceCrs}.`;
   if(coordinates)showPopup(variationMap,{name:`Capa de hielo · ${year}`,category:'Delimitación histórica',description,source:`Archivo: ${p.source.split('/').at(-1)} · ${p.sourceCrs}`},coordinates);
 }
@@ -87,8 +87,6 @@ function setupVariationChart() {
         marks.push(g);chart.append(g);
       });
     });
-    const table=document.createElement('table');table.innerHTML='<caption>Superficies del intervalo seleccionado</caption><thead><tr><th>Serie</th><th>Año</th><th>Área ± error (km²)</th><th>Tasa (km²/año)</th></tr></thead>';
-    const body=document.createElement('tbody');rows.forEach((s,i)=>s.forEach(r=>{const tr=document.createElement('tr');for(const value of [names[i],r.year,`${fmt(r.area)} ± ${fmt(r.error)}`,r.rate===null?'No indicada':fmt(r.rate)]){const td=document.createElement('td');td.textContent=value;tr.append(td);}body.append(tr);}));table.append(body);el('#variation-table').replaceChildren(table);
     const last=rows[1].at(-1)||rows[0].at(-1);if(last)inspect(last,last.series==='icecap'?1:0);
   }
   start.onchange=()=>{if(+start.value>+end.value)end.value=start.value;render();};end.onchange=()=>{if(+end.value<+start.value)start.value=end.value;render();};errors.onchange=render;

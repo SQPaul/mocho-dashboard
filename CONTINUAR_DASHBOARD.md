@@ -1,6 +1,6 @@
 # Instrucciones para continuar el dashboard Mocho
 
-> Actualización de la corrección: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la Figura 4 tiene sus dos paneles y tabla, sin descarga CSV. El pedido posterior del usuario de iniciar Variaciones en 3D prevalece sobre la vista 2D inicial indicada abajo. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
+> Estado final: ambos capítulos reutilizan el mapa 3D/2D de `map-common.js`. Se incorporaron las doce delimitaciones de la serie publicada, las balizas usan puntos nativos sobre el relieve y la serie de superficie conserva sus dos paneles, sin tabla ni descarga CSV. La interfaz muestra títulos sin números de figura y omite notas metodológicas desplegables. Los mapas de ambos capítulos comienzan en 3D. La suite local completa pasó el 09/09/2026. Consultar `PROJECT_CONTEXT.md` para las fuentes verificadas; no repetir esas búsquedas.
 
 ## 1. Leer el contexto y conservar el trabajo iniciado
 
@@ -110,10 +110,10 @@ Fuente exacta activa: `data\bm_hist.xlsx`, hoja `Hoja1`. El script local `script
 2. Usar líneas, puntos y banda de incertidumbre, conservando los años de observación de cada serie. El eje horizontal debe ser temporal: respetar las distancias entre años.
 3. Mantener ejes verticales propios para cada panel; no combinar las dos superficies en una única serie ni normalizarlas por defecto.
 4. Permitir consulta con cursor, toque y teclado. Mostrar año, área ± error y tasa del intervalo precedente, cuando exista.
-5. Añadir selección de intervalo compartida, activar/desactivar incertidumbre, restablecer y tabla, sin descarga CSV. Reutilizar patrones de `history.js`, con un módulo separado para estas series.
+5. Añadir selección de intervalo compartida, activar/desactivar incertidumbre y restablecer, sin tabla ni descarga CSV. Reutilizar patrones de `history.js`, con un módulo separado para estas series.
 6. Consultar solo observaciones reales. Las líneas unen observaciones, pero no crean mediciones anuales intermedias. No rellenar los años que faltan con ceros.
 7. En el panel de capa de hielo, ofrecer «Ver contorno en el mapa» para el año consultado, habilitado únicamente si existe su geometría. Esta acción activa el contorno y desplaza la vista al mapa; no oculta otras comparaciones seleccionadas.
-8. Mostrar fuentes: Figura 4, p. 19; Excel del anexo 2; tablas 39 y 40 del Anexo B del informe. No confundir unidades de superficie (km²) con las de balance de masa del capítulo 1 (m eq.a.).
+8. Conservar la trazabilidad en los derivados y la documentación, sin mostrar un bloque desplegable de fuentes en la interfaz. No confundir unidades de superficie (km²) con las de balance de masa del capítulo 1 (m eq.a.).
 
 ### Valores de control del capítulo 2
 
@@ -127,10 +127,10 @@ Entre 1976 y 2026, el cambio relativo es aproximadamente −21 % para Mocho y �
 ## 8. Verificar antes de dar el trabajo por terminado
 
 1. Servir el sitio: `python -m http.server 8000 --bind 127.0.0.1`. Comprobar antes si el puerto ya está ocupado: podría seguir activo el servidor de la sesión anterior.
-2. Ejecutar y ampliar `scripts/check_dashboard.py`, que usa Playwright/Edge. La primera versión de Figura 2 y balizas todavía no ha pasado este script.
+2. Ejecutar `scripts/check_dashboard.py`, que usa Playwright/Edge. La versión final del balance histórico, las balizas y el capítulo 2 pasa esta suite completa.
 3. Comprobar capítulo 1: mapa 3D/2D, capas, cuatro estaciones, dos cumbres, diez balizas, fichas, prioridad B15/EMAM-Mocho, gráfico, filtros, teclado e incertidumbre, sin tabla ni CSV en la Figura 2.
 4. Comprobar navegación: siguiente/anterior, URL directa a capítulo 2, recarga, Atrás/Adelante, foco y regreso al mapa sin quedar en blanco. Confirmar que no se acumulan mapas ni manejadores al alternar varias veces.
-5. Comprobar Figura 4: 17 y 12 observaciones, extremos de la tabla anterior, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
+5. Comprobar la serie histórica: 17 y 12 observaciones, extremos documentados, banda de incertidumbre, años irregulares, rangos vacíos y selección de un solo año sin errores.
 6. Comprobar Figura 7: los 12 controles activan su año, las fuentes y fechas son correctas, y funcionan la leyenda, la consulta de contornos y el enlace desde el gráfico.
 7. Probar escritorio de 1440 px y móvil de 390 px; comprobar capturas y ausencia de desbordamiento horizontal global. El desplazamiento horizontal dentro de un gráfico sí es aceptable.
 8. Probar fallos de carga de un JSON, de imagen y del relieve externo. Un fallo en un capítulo no debe impedir abrir el otro; mostrar un mensaje útil para el componente afectado.

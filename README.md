@@ -8,7 +8,7 @@ Sitio: https://sqpaul.github.io/mocho-dashboard/
 
 Desde esta carpeta: `python -m http.server 8000 --bind 127.0.0.1`. Abrir http://127.0.0.1:8000 o `http://127.0.0.1:8000/#capitulo-2`.
 
-Web estática sin compilación ni claves API. Incluye relieve 3D/2D, cuatro estaciones meteorológicas, las cumbres Mocho y Choshuenco, balizas GNSS consultables, Figura 2 y navegación horizontal por capítulos. El capítulo 2 añade Figura 4 (dos series de superficie con filtros, incertidumbre y tabla) y Figura 7 (12 contornos sobre el mismo motor 3D, compartido en `map-common.js`). Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D. La Figura 2 representa pérdidas en rojo y ganancias en azul, sin tabla ni descarga de datos.
+Web estática sin compilación ni claves API. Incluye relieve 3D/2D, cuatro estaciones meteorológicas, las cumbres Mocho y Choshuenco, balizas GNSS consultables, balance de masa histórico y navegación horizontal por capítulos. El capítulo 2 añade dos series interactivas de superficie y 12 contornos sobre el mismo motor 3D, compartido en `map-common.js`. Requiere conexión para obtener el relieve externo de Mapterhorn; si falla, ambos mapas pasan a 2D. Las vistas priorizan sus títulos y gráficos, sin numeración de figura, tablas de datos, notas desplegables ni descargas.
 
 ## Fuentes
 

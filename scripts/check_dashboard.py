@@ -20,6 +20,7 @@ with sync_playwright() as pw:
     page.wait_for_function('window.mochoMap.isStyleLoaded()')
     page.wait_for_timeout(1600)
     assert page.locator('#fallback').is_hidden()
+    assert page.locator('.monitoring').count()==0
     terrain=page.evaluate('({pitch:mochoMap.getPitch(),terrain:mochoMap.getTerrain(),elevation:mochoMap.queryTerrainElevation([-72.025,-39.933])})')
     assert terrain['terrain'] is not None, terrain
     assert terrain['elevation'] and terrain['elevation']>1000, terrain
@@ -72,6 +73,8 @@ with sync_playwright() as pw:
     assert page.locator('#history-table').count()==0
     assert page.locator('#history-download').count()==0
     assert page.locator('.history-source').count()==0
+    assert page.locator('#balance-historico .eyebrow').inner_text()=='MEMORIA DEL HIELO'
+    assert page.locator('.history-heading .history-index').count()==0
     colors=page.evaluate("""({
       gain:getComputedStyle(document.querySelector('.positive .balance-bar')).fill,
       loss:getComputedStyle(document.querySelector('.negative .balance-bar')).fill
@@ -92,10 +95,15 @@ with sync_playwright() as pw:
     page.wait_for_function('window.mochoVariationReady === true',timeout=45000)
     page.wait_for_function('mochoVariationMap.isStyleLoaded()')
     page.wait_for_selector('#variation-chart .variation-line', timeout=30000)
+    assert 'todos cambiamos.' in page.locator('#variation-title').inner_text()
     assert page.evaluate('mochoVariationMap.getTerrain()') is not None
     assert page.evaluate('mochoVariationMap.getPitch()') > 40
     assert page.locator('#variation-map canvas').is_visible()
     assert page.locator('#variation-map .contour-svg').count()==0
+    assert page.locator('.variation-map-card .eyebrow').inner_text()=='DELIMITACIONES SOBRE EL RELIEVE'
+    assert page.locator('.variation-chart-card .eyebrow').inner_text()=='SERIE HISTÓRICA'
+    assert page.locator('.variation-source').count()==0
+    assert page.locator('#variation-table').count()==0
     assert page.locator('#contour-controls input:not(:disabled)').count()==12
     assert page.locator('#contour-controls input:disabled').count()==0
     assert page.get_by_role('checkbox',name='Mostrar contorno 1976',exact=True).is_checked()
@@ -118,7 +126,6 @@ with sync_playwright() as pw:
     page.wait_for_function('mochoVariationMap.getPitch()>50')
     page.locator('#variation-start').select_option('2026')
     assert page.locator('#variation-chart g[data-year]').count()==2
-    assert page.locator('#variation-table tbody tr').count()==2
     page.locator('#variation-chart g[data-series="icecap"]').focus()
     assert not page.locator('#chart-show-contour').is_disabled()
     page.locator('#chart-show-contour').click()
@@ -151,8 +158,29 @@ with sync_playwright() as pw:
     assert page.evaluate("mochoMap.getLayoutProperty('glacier-fill','visibility')")=='none'
     page.get_by_role('checkbox',name='Mostrar glaciar Mocho',exact=True).check()
     assert page.evaluate("mochoMap.getLayoutProperty('glacier-fill','visibility')")=='visible'
-    point=page.evaluate('mochoMap.project([-72.00936732,-39.94179041])')
+    polygon_points=page.evaluate("""()=>{
+      const canvas=mochoMap.getCanvas(),found={};
+      for(let y=80;y<canvas.clientHeight-80;y+=12)for(let x=80;x<canvas.clientWidth-80;x+=12){
+        const glacier=mochoMap.queryRenderedFeatures([x,y],{layers:['glacier-fill']}).length>0;
+        const icecap=mochoMap.queryRenderedFeatures([x,y],{layers:['icecap-fill']}).length>0;
+        const marker=mochoMap.queryRenderedFeatures([x,y],{layers:['stake-dot','stake-label','station-dot','station-halo','summit-symbol']}).length>0;
+        if(glacier&&!marker&&!found.glacier)found.glacier={x,y};
+        if(icecap&&!glacier&&!marker&&!found.icecap)found.icecap={x,y};
+        if(found.glacier&&found.icecap)return found;
+      }
+      return found;
+    }""")
+    assert polygon_points.get('glacier') and polygon_points.get('icecap'),polygon_points
     box=page.locator('#map').bounding_box()
+    page.mouse.click(box['x']+polygon_points['glacier']['x'],box['y']+polygon_points['glacier']['y'])
+    page.get_by_role('heading',name='Glaciar Mocho',exact=True).wait_for()
+    assert page.locator('.maplibregl-popup-content p,.maplibregl-popup-content .popup-tag').count()==0
+    page.locator('.maplibregl-popup-close-button').click()
+    page.mouse.click(box['x']+polygon_points['icecap']['x'],box['y']+polygon_points['icecap']['y'])
+    page.get_by_role('heading',name='Capa de hielo Mocho–Choshuenco',exact=True).wait_for()
+    assert page.locator('.maplibregl-popup-content p,.maplibregl-popup-content .popup-tag').count()==0
+    page.locator('.maplibregl-popup-close-button').click()
+    point=page.evaluate('mochoMap.project([-72.00936732,-39.94179041])')
     page.mouse.click(box['x']+point['x'],box['y']+point['y'])
     page.get_by_role('heading',name='EMAM-Mocho',exact=True).wait_for()
     assert 'Latitud -39.94179041° · Longitud -72.00936732°' in page.locator('.maplibregl-popup-content').inner_text()
@@ -221,4 +249,4 @@ with sync_playwright() as pw:
     for context in browser.contexts:
         context.close()
     browser.close()
-    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','Figure 2 gain/loss colors','no CSV downloads','Figure 2 without data table or source notes','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','sources','mobile','terrain network fallback','chapter 2 hash navigation','Figure 4 SVG series','Figure 7 3D contour map'],'pageErrors':errors},ensure_ascii=True))
+    print(json.dumps({'result':'PASS','terrain':terrain,'study':study,'landmarkStyle':landmark_style,'historyColors':colors,'checks':['2026 study image and geometries','four coordinate-only stations','B15 priority over EMAM-Mocho','yellow summit symbols','coordinate-only stake popup','2025-2026 mass balance','gain/loss colors','titles without figure numbers','no data tables or source-note accordions','no CSV downloads','minimal glacier and ice-cap popups','3D elevation','GNSS screen placement','2D toggle','layers','summit popup','zoom','map sources','mobile','terrain network fallback','chapter 2 hash navigation','historical area SVG series','3D contour map'],'pageErrors':errors},ensure_ascii=True))
